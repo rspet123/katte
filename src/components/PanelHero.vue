@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
+import globeRaw    from '../assets/svg/micrographics/globe.svg?raw'
+import resistorRaw   from '../assets/svg/micrographics/resistor.svg?raw'
 import logoRaw from '../assets/svg/logo/main_logo.svg?raw'
 import { generateClipPath } from '../utils/clip_path_gen'
 import { rand } from '../utils/glitch'
@@ -8,7 +10,10 @@ import vTypewriter from '../directives/v-typewriter.js'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 const angArrow = computed(() => fixStrokes(angArrowRaw))
+const globeSvg  = computed(() => fixStrokes(globeRaw))
+const resistorSvg  = computed(() => fixStrokes(resistorRaw))
 const logoSvg  = computed(() => logoRaw)
+
 
 // ── Props / Emits ───────────────────────────────────────────────────────────
 defineProps<{ isActive: boolean }>()
@@ -71,12 +76,15 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
   <section class="panel panel--dark" id="hero" ref="panelRef">
     <div class="topo-texture" aria-hidden="true" />
 
-    <p class="eyebrow corner-label" v-typewriter="{text: '[ DATA IS DESIGN ]', seconds: 2.5}"></p>
+    <p class="eyebrow corner-label" v-typewriter="{text: '[ ASSET_ID : RWS_1999 ]', seconds: 2.5}"></p>
 
     <div class="hero-logo" ref="heroLogoRef" v-html="logoSvg" aria-hidden="true" />
 
     <div class="panel-inner">
-      <p class="eyebrow">p o r t f o l i o</p>
+      <p class="eyebrow portfolio-label">
+        p o r t f o l i o
+        <span class="portfolio-globe" v-html="globeSvg" aria-hidden="true" />
+      </p>
       <p class="hero-sub">[ RESTRAINT IS A CREATIVE POSITION ]</p>
       <p class="hero-sub">[ SYSTEMS BUILT WITH INTENT ]</p>
     </div>
@@ -88,14 +96,6 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
       <span class="scroll-cue__arrow" v-html="angArrow" />
     </a>
 
-    <button
-      class="section-tab"
-      :class="{ 'section-tab--active': isActive }"
-      @click="emit('toggle')"
-      aria-label="More info"
-    >
-      <span class="section-tab__icon" v-html="angArrow" />
-    </button>
   </section>
 </template>
 
@@ -165,6 +165,27 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
 }
 
 /* ── HERO COPY ────────────────────────────────────────────────────────────── */
+
+.portfolio-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.portfolio-globe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3vh;
+  height: 3vh;
+  line-height: 0;
+}
+
+.portfolio-globe :deep(svg) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
 .hero-sub {
   font-size: 13px;

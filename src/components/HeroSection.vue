@@ -163,19 +163,14 @@ onUnmounted(() => {
         </button>
       </div>
       <div class="drawer__body">
-        <template v-if="activeDrawer === 'hero'">
-          <p class="drawer__eyebrow">Introduction</p>
-          <h3 class="drawer__title">Hello.</h3>
-          <p class="drawer__text">Designer and developer focused on minimal, typographic interfaces. Available for select projects.</p>
-        </template>
-        <template v-else-if="activeDrawer === 'work'">
+        <template v-if="activeDrawer === 'work'">
           <p class="drawer__eyebrow">Browse</p>
           <h3 class="drawer__title">Works.</h3>
           <ul class="drawer__list">
-            <li>All</li>
-            <li>Branding</li>
-            <li>Digital</li>
-            <li>Print</li>
+            <li>AI</li>
+            <li>Agents</li>
+            <li>Data</li>
+            <li>Dashboards</li>
           </ul>
         </template>
         <template v-else-if="activeDrawer === 'about'">
@@ -207,8 +202,7 @@ onUnmounted(() => {
 
     <PanelHero
       ref="heroPanelRef"
-      :isActive="activeDrawer === 'hero'"
-      @toggle="toggleDrawer('hero')"
+      :isActive="false"
     />
 
     <div class="bridge" aria-hidden="true">
@@ -246,7 +240,7 @@ onUnmounted(() => {
 
 <style>
 :root {
-  --drawer-w: 380px;
+  --drawer-w: 50vw;
 }
 </style>
 
@@ -317,6 +311,9 @@ onUnmounted(() => {
 }
 
 /* ── SCROLLBAR ─────────────────────────────────────────────────────────── */
+
+.scroll-root--pushed::-webkit-scrollbar { width: 0; }
+.scroll-root--pushed { scrollbar-width: none; }
 
 .scroll-root::-webkit-scrollbar {
   width: 3px;
