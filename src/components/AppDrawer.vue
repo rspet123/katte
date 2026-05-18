@@ -71,6 +71,27 @@ const emit = defineEmits<{ close: [] }>()
   flex-direction: column;
   padding: 60px 40px;
   overflow-y: auto;
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(136, 135, 128, 0.35) transparent;
+}
+
+.drawer::-webkit-scrollbar {
+  width: 3px;
+}
+
+.drawer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.drawer::-webkit-scrollbar-thumb {
+  background: rgba(136, 135, 128, 0.35);
+  border-radius: 0;
+  transition: background 250ms ease;
+}
+
+.drawer::-webkit-scrollbar-thumb:hover {
+  background: #ff2d78;
 }
 
 .drawer__tex {
@@ -98,17 +119,12 @@ const emit = defineEmits<{ close: [] }>()
   width: 32px;
   height: 32px;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
+  border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: border-color 200ms ease;
-}
-
-.drawer__close:hover {
-  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .drawer__close-icon {

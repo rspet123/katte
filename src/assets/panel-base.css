@@ -153,7 +153,7 @@
 }
 
 .section-tab--active {
-  top: calc(50% - 20vh);
+  top: calc(50% - 27.5vh);
 }
 
 .section-tab--active .section-tab__icon {

@@ -3,6 +3,7 @@ export default {
     startWatching(el, binding.value);
   },
   updated(el, binding) {
+    if (binding.value?.text === binding.oldValue?.text) return;
     if (el._typewriterCancel) el._typewriterCancel();
     if (el._typewriterObserver) el._typewriterObserver.disconnect();
     startWatching(el, binding.value);
