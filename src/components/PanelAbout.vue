@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
-import { runHoverGlitch } from '../utils/glitch'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 const angArrow = computed(() => fixStrokes(angArrowRaw))
@@ -29,7 +28,6 @@ defineExpose({ panelRef })
       class="section-tab"
       :class="{ 'section-tab--active': isActive }"
       @click="emit('toggle')"
-      @mouseenter="runHoverGlitch"
       aria-label="More info"
     >
       <span class="section-tab__icon" v-html="angArrow" />
