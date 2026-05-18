@@ -34,6 +34,15 @@
 .panel--dark  .eyebrow { color: #888780; }
 .panel--light .eyebrow { color: rgba(0, 0, 0, 0.45); }
 
+.corner-label {
+  position: absolute;
+  top: 60px;
+  right: 60px;
+  z-index: 10;
+  margin: 0;
+  text-align: right;
+}
+
 .section-title {
   font-size: clamp(38px, 6vw, 72px);
   font-weight: 300;

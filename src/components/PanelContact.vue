@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
+import vTypewriter from '../directives/v-typewriter.js'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 const angArrow = computed(() => fixStrokes(angArrowRaw))
@@ -14,8 +15,10 @@ defineExpose({ panelRef })
 
 <template>
   <section class="panel panel--light" id="contact" ref="panelRef">
+    <p class="eyebrow corner-label" v-typewriter="{text: '[ EST // 1999 ]', seconds: 2.5}"></p>
+
     <div class="panel-inner">
-      <p class="eyebrow">03 / 03 · Contact</p>
+      <p class="eyebrow">03 / 03 · FIND ME // HERE</p>
       <h2 class="section-title">contact.</h2>
     </div>
 

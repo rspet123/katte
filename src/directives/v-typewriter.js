@@ -1,20 +1,38 @@
 export default {
   beforeMount(el, binding) {
-    startTyping(el, binding.value);
+    startWatching(el, binding.value);
   },
   updated(el, binding) {
     if (el._typewriterCancel) el._typewriterCancel();
-    startTyping(el, binding.value);
+    if (el._typewriterObserver) el._typewriterObserver.disconnect();
+    startWatching(el, binding.value);
   },
   unmounted(el) {
     if (el._typewriterCancel) el._typewriterCancel();
+    if (el._typewriterObserver) el._typewriterObserver.disconnect();
   },
 };
 
-const CHARS = 'abcdefghijklmnopqrstuvwxyz';
+const LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const DIGITS  = '0123456789';
 
-function randomChar() {
-  return CHARS[Math.floor(Math.random() * CHARS.length)];
+function randomChar(original) {
+  if (/[0-9]/.test(original)) return DIGITS[Math.floor(Math.random() * DIGITS.length)];
+  const pool = /[A-Z]/.test(original) ? LETTERS.slice(26) : LETTERS.slice(0, 26);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function startWatching(el, options) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries[0].isIntersecting) return;
+      observer.disconnect();
+      startTyping(el, options);
+    },
+    { threshold: 0.1 },
+  );
+  el._typewriterObserver = observer;
+  observer.observe(el);
 }
 
 function startTyping(el, { text, seconds }) {
@@ -23,6 +41,19 @@ function startTyping(el, { text, seconds }) {
   let step = 0;
   let cancelled = false;
   let timeoutId = null;
+
+  // Measure each character's width (including letter-spacing / kerning) by
+  // diffing cumulative widths of text.slice(0, i+1) − text.slice(0, i).
+  const probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;pointer-events:none;';
+  el.appendChild(probe);
+  const cumWidths = [];
+  for (let i = 0; i <= text.length; i++) {
+    probe.textContent = text.slice(0, i).replace(/ /g, '\u00A0');
+    cumWidths.push(probe.getBoundingClientRect().width);
+  }
+  const charWidths = text.split('').map((_, i) => Math.max(cumWidths[i + 1] - cumWidths[i], 0));
+  probe.remove();
 
   el._typewriterCancel = () => {
     cancelled = true;
@@ -41,12 +72,19 @@ function startTyping(el, { text, seconds }) {
       return;
     }
 
-    let display = text.slice(0, settledCount);
-    for (let i = settledCount; i < text.length; i++) {
-      display += text[i] === ' ' ? ' ' : randomChar();
+    let html = '';
+    for (let i = 0; i < text.length; i++) {
+      const w = charWidths[i];
+      let char;
+      if (i < settledCount || !/[a-zA-Z0-9]/.test(text[i])) {
+        char = text[i] === ' ' ? '&nbsp;' : text[i];
+      } else {
+        char = randomChar(text[i]);
+      }
+      html += `<span style="display:inline-block;width:${w}px;text-align:center;overflow:hidden">${char}</span>`;
     }
 
-    el.innerHTML = display;
+    el.innerHTML = html;
     step++;
     timeoutId = setTimeout(update, stepDuration);
   }

@@ -4,6 +4,7 @@ import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
 import logoRaw from '../assets/svg/logo/main_logo.svg?raw'
 import { generateClipPath } from '../utils/clip_path_gen'
 import { rand } from '../utils/glitch'
+import vTypewriter from '../directives/v-typewriter.js'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 const angArrow = computed(() => fixStrokes(angArrowRaw))
@@ -69,6 +70,8 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
 <template>
   <section class="panel panel--dark" id="hero" ref="panelRef">
     <div class="topo-texture" aria-hidden="true" />
+
+    <p class="eyebrow corner-label" v-typewriter="{text: '[ DATA IS DESIGN ]', seconds: 2.5}"></p>
 
     <div class="hero-logo" ref="heroLogoRef" v-html="logoSvg" aria-hidden="true" />
 
