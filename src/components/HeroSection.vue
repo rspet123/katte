@@ -14,16 +14,15 @@ const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentC
 const targetCircle = computed(() => fixStrokes(targetCircleRaw))
 const angArrow = computed(() => fixStrokes(angArrowRaw))
 const burstline = computed(() => fixStrokes(burstlineRaw))
-// Logo fills are SVG-default black; CSS `fill: white` on :deep(svg) overrides.
 const logoSvg = computed(() => logoRaw)
 
 // ── Hero ↔ reticle swap ───────────────────────────────────────────────────
-const heroRef        = ref<HTMLElement | null>(null)
-const scrollRootRef  = ref<HTMLElement | null>(null)
-const heroInView     = ref(true)
+const heroRef       = ref<HTMLElement | null>(null)
+const scrollRootRef = ref<HTMLElement | null>(null)
+const heroInView    = ref(true)
 let   heroObserver: IntersectionObserver | null = null
 
-// ── Glitch effect on hero logo ────────────────────────────────────────────
+// ── Glitch effect ───────────────────────────────────────────────────────────
 const heroLogoRef = ref<HTMLElement | null>(null)
 let glitchTimeout: ReturnType<typeof setTimeout> | null = null
 
@@ -212,6 +211,7 @@ onUnmounted(() => {
   overflow-y: scroll;
   overflow-x: hidden;
   scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
 }
 
 /* ── PANELS ────────────────────────────────────────────────────────────── */
