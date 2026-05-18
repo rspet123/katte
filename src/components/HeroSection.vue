@@ -4,6 +4,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import targetCircleRaw from '../assets/svg/micrographics/target_circle.svg?raw'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
 import burstlineRaw from '../assets/svg/micrographics/burstline.svg?raw'
+import logoRaw from '../assets/svg/logo/main_logo.svg?raw'
 import { generateClipPath } from '../utils/clip_path_gen.js'
 
 // Both SVGs use hardcoded stroke:#000 — replace with currentColor so the
@@ -13,9 +14,17 @@ const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentC
 const targetCircle = computed(() => fixStrokes(targetCircleRaw))
 const angArrow = computed(() => fixStrokes(angArrowRaw))
 const burstline = computed(() => fixStrokes(burstlineRaw))
+// Logo fills are SVG-default black; CSS `fill: white` on :deep(svg) overrides.
+const logoSvg = computed(() => logoRaw)
+
+// ── Hero ↔ reticle swap ───────────────────────────────────────────────────
+const heroRef        = ref<HTMLElement | null>(null)
+const scrollRootRef  = ref<HTMLElement | null>(null)
+const heroInView     = ref(true)
+let   heroObserver: IntersectionObserver | null = null
 
 // ── Glitch effect on hero logo ────────────────────────────────────────────
-const heroNameRef = ref<HTMLElement | null>(null)
+const heroLogoRef = ref<HTMLElement | null>(null)
 let glitchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const rand = (min: number, max: number) =>
