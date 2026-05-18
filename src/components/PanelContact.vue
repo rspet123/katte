@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
 import { runHoverGlitch } from '../utils/glitch'
 
@@ -8,10 +8,13 @@ const angArrow = computed(() => fixStrokes(angArrowRaw))
 
 defineProps<{ isActive: boolean }>()
 const emit = defineEmits<{ toggle: [] }>()
+
+const panelRef = ref<HTMLElement | null>(null)
+defineExpose({ panelRef })
 </script>
 
 <template>
-  <section class="panel panel--light" id="contact">
+  <section class="panel panel--light" id="contact" ref="panelRef">
     <div class="panel-inner">
       <p class="eyebrow">03 / 03 · Contact</p>
       <h2 class="section-title">Contact.</h2>

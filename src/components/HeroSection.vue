@@ -1,26 +1,79 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 
-import targetCircleRaw from '../assets/svg/micrographics/target_circle.svg?raw'
-import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
-import burstlineRaw from '../assets/svg/micrographics/burstline.svg?raw'
+import angArrowRaw   from '../assets/svg/micrographics/ang_arrow.svg?raw'
+import burstlineRaw  from '../assets/svg/micrographics/burstline.svg?raw'
+import reticle1Raw   from '../assets/svg/micrographics/target_circle.svg?raw'
+import reticle2Raw   from '../assets/svg/micrographics/target_circle_2.svg?raw'
+import reticle3Raw   from '../assets/svg/micrographics/target_circle_3.svg?raw'
 
 import PanelHero    from './PanelHero.vue'
 import PanelWork    from './PanelWork.vue'
 import PanelAbout   from './PanelAbout.vue'
 import PanelContact from './PanelContact.vue'
 
+import { generateClipPath } from '../utils/clip_path_gen'
+import { rand } from '../utils/glitch'
+
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 
-const targetCircle = computed(() => fixStrokes(targetCircleRaw))
-const angArrow     = computed(() => fixStrokes(angArrowRaw))
-const burstline    = computed(() => fixStrokes(burstlineRaw))
+const angArrow  = computed(() => fixStrokes(angArrowRaw))
+const burstline = computed(() => fixStrokes(burstlineRaw))
 
-// ── Hero ↔ reticle swap ───────────────────────────────────────────────────
-const heroPanelRef  = ref<InstanceType<typeof PanelHero> | null>(null)
-const scrollRootRef = ref<HTMLElement | null>(null)
-const heroInView    = ref(true)
-let   heroObserver: IntersectionObserver | null = null
+// ── Reticle variants — one entry per panel (index 0 = hero, hidden).
+// Add more SVG imports and push to this array to support additional panels.
+const RETICLE_SVGS = [
+  null,        // panel 0: hero — reticle is hidden
+  reticle1Raw, // panel 1: work
+  reticle2Raw, // panel 2: about
+  reticle3Raw, // panel 3: contact
+]
+
+// ── Reticle state ─────────────────────────────────────────────────────────
+const activePanel = ref(0)
+const reticleRef  = ref<HTMLElement | null>(null)
+
+const reticleSvg = computed(() => {
+  const raw = RETICLE_SVGS[activePanel.value] ?? RETICLE_SVGS[RETICLE_SVGS.length - 1]
+  return raw ? fixStrokes(raw) : ''
+})
+
+// Two clip-path flashes; SVG swaps at the start of the second flash so the
+// glitch appears to "reveal" the new variant.
+const runReticleGlitch = (onSwap: () => void) => {
+  const el = reticleRef.value
+  if (!el) { onSwap(); return }
+
+  const t1 = rand(60, 100)
+  const g1 = rand(20, 40)
+  const t2 = rand(50, 80)
+
+  el.style.clipPath = generateClipPath(8)
+  el.classList.add('reticle--glitching')
+  setTimeout(() => {
+    el.style.clipPath = ''
+    el.classList.remove('reticle--glitching')
+    setTimeout(() => {
+      onSwap()
+      el.style.clipPath = generateClipPath(8)
+      el.classList.add('reticle--glitching')
+      setTimeout(() => {
+        el.style.clipPath = ''
+        el.classList.remove('reticle--glitching')
+      }, t2)
+    }, g1)
+  }, t1)
+}
+
+// ── Panel refs ────────────────────────────────────────────────────────────
+const heroPanelRef    = ref<InstanceType<typeof PanelHero>    | null>(null)
+const workPanelRef    = ref<InstanceType<typeof PanelWork>    | null>(null)
+const aboutPanelRef   = ref<InstanceType<typeof PanelAbout>   | null>(null)
+const contactPanelRef = ref<InstanceType<typeof PanelContact> | null>(null)
+const scrollRootRef   = ref<HTMLElement | null>(null)
+
+let panelObserver: IntersectionObserver | null = null
+let panelElements: HTMLElement[] = []
 
 // ── Drawer state ──────────────────────────────────────────────────────────
 const activeDrawer = ref<string | null>(null)
@@ -33,26 +86,44 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
-  // Observe the hero panel against the scroll container as root so
-  // intersection is measured within the snapping viewport, not the document.
-  heroObserver = new IntersectionObserver(
-    (entries) => { if (entries[0]) heroInView.value = entries[0].isIntersecting },
+
+  panelObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        const idx = panelElements.indexOf(entry.target as HTMLElement)
+        if (idx === -1 || idx === activePanel.value) continue
+        // Hero panel (0): just update state — reticle is invisible anyway
+        if (idx === 0) { activePanel.value = 0; continue }
+        runReticleGlitch(() => { activePanel.value = idx })
+      }
+    },
     { root: scrollRootRef.value, threshold: 0.5 },
   )
-  const el = heroPanelRef.value?.panelRef
-  if (el) heroObserver.observe(el)
+
+  // Order must match RETICLE_SVGS index
+  panelElements = [
+    heroPanelRef.value?.panelRef,
+    workPanelRef.value?.panelRef,
+    aboutPanelRef.value?.panelRef,
+    contactPanelRef.value?.panelRef,
+  ].filter((el): el is HTMLElement => el != null)
+
+  panelElements.forEach(el => panelObserver!.observe(el))
 })
+
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
-  heroObserver?.disconnect()
+  panelObserver?.disconnect()
 })
 </script>
 
 <template>
   <div
+    ref="reticleRef"
     class="reticle"
-    :class="{ 'reticle--visible': !heroInView }"
-    v-html="targetCircle"
+    :class="{ 'reticle--visible': activePanel > 0 }"
+    v-html="reticleSvg"
     aria-hidden="true"
   />
 
@@ -131,6 +202,7 @@ onUnmounted(() => {
     </div>
 
     <PanelWork
+      ref="workPanelRef"
       :isActive="activeDrawer === 'work'"
       @toggle="toggleDrawer('work')"
     />
@@ -140,6 +212,7 @@ onUnmounted(() => {
     </div>
 
     <PanelAbout
+      ref="aboutPanelRef"
       :isActive="activeDrawer === 'about'"
       @toggle="toggleDrawer('about')"
     />
@@ -149,6 +222,7 @@ onUnmounted(() => {
     </div>
 
     <PanelContact
+      ref="contactPanelRef"
       :isActive="activeDrawer === 'contact'"
       @toggle="toggleDrawer('contact')"
     />
@@ -170,8 +244,8 @@ onUnmounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 480px;
-  height: 480px;
+  height: 240px;
+  width: auto;
   color: #ffffff;
   mix-blend-mode: difference;
   pointer-events: none;
@@ -182,9 +256,17 @@ onUnmounted(() => {
 
 .reticle--visible { opacity: 1; }
 
+.reticle--glitching {
+  filter:
+    blur(0.4px)
+    drop-shadow(-3px 0 0 rgba(255, 20, 80, 0.75))
+    drop-shadow( 3px 0 0 rgba(0, 220, 255, 0.75));
+}
+
 .reticle :deep(svg) {
-  width: 100%;
   height: 100%;
+  width: auto;
+  display: block;
 }
 
 /* ── SCROLL ROOT ───────────────────────────────────────────────────────── */
