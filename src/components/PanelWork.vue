@@ -9,15 +9,19 @@ defineProps<{ isActive: boolean }>()
 const emit = defineEmits<{ toggle: [] }>()
 
 const panelRef = ref<HTMLElement | null>(null)
+const currentYear = new Date().getFullYear()
+
 defineExpose({ panelRef })
 </script>
 
 <template>
   <section class="panel panel--light" id="work" ref="panelRef">
     <div class="panel-inner">
-      <p class="eyebrow">01 / 03 · Selected Works / xx19–xx26</p>
-      <h2 class="section-title">Work.</h2>
+      <p class="eyebrow">01 / 03 · Selected Works // xx19–xx{{currentYear.toString().slice(-2)}}</p>
+      <h2 class="section-title">work.</h2>
     </div>
+
+    <p class="scroll-hint">Scroll</p>
 
     <a class="scroll-cue scroll-cue--dark" href="#about" aria-label="Scroll to About">
       <span class="eyebrow">About</span>

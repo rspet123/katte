@@ -115,3 +115,32 @@
 .section-tab--active .section-tab__icon {
   transform: rotate(225deg);
 }
+
+/* ── SCROLL HINT ─────────────────────────────────────────────────────────── */
+
+.scroll-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.panel--dark  .scroll-hint { animation: scroll-hint-dark  3.5s ease-in-out infinite; }
+.panel--light .scroll-hint { animation: scroll-hint-light 3.5s ease-in-out infinite; }
+
+@keyframes scroll-hint-dark {
+  0%, 100% { color: rgba(255, 255, 255, 0.15); }
+  50%       { color: rgba(255, 255, 255, 0.4);  }
+}
+
+@keyframes scroll-hint-light {
+  0%, 100% { color: rgba(0, 0, 0, 0.12); }
+  50%       { color: rgba(0, 0, 0, 0.28); }
+}

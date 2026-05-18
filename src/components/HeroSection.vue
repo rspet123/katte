@@ -73,6 +73,7 @@ const workPanelRef    = ref<InstanceType<typeof PanelWork>    | null>(null)
 const aboutPanelRef   = ref<InstanceType<typeof PanelAbout>   | null>(null)
 const contactPanelRef = ref<InstanceType<typeof PanelContact> | null>(null)
 const scrollRootRef   = ref<HTMLElement | null>(null)
+const texRef          = ref<HTMLElement | null>(null)
 
 let panelObserver: IntersectionObserver | null = null
 let panelElements: HTMLElement[] = []
@@ -86,8 +87,16 @@ const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Escape') activeDrawer.value = null
 }
 
+const onScroll = () => {
+  const y = scrollRootRef.value?.scrollTop ?? 0
+  if (texRef.value) texRef.value.style.transform = `translateY(${y * 0.12}px)`
+}
+
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
+
+  // ── Texture parallax ───────────────────────────────────────────────────
+  scrollRootRef.value?.addEventListener('scroll', onScroll, { passive: true })
 
   panelObserver = new IntersectionObserver(
     (entries) => {
@@ -116,11 +125,14 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
+  scrollRootRef.value?.removeEventListener('scroll', onScroll)
   panelObserver?.disconnect()
 })
 </script>
 
 <template>
+  <div class="tex-overlay" ref="texRef" aria-hidden="true" />
+
   <div
     ref="reticleRef"
     class="reticle"
@@ -239,6 +251,18 @@ onUnmounted(() => {
 </style>
 
 <style scoped>
+/* ── TEXTURE OVERLAY ──────────────────────────────────────────────────── */
+
+.tex-overlay {
+  position: fixed;
+  inset: 0;
+  background: url('@/assets/svg/textures/bg_tex.png') repeat;
+  opacity: 0.009;
+  pointer-events: none;
+  z-index: 5;
+  will-change: transform;
+}
+
 /* ── RETICLE ───────────────────────────────────────────────────────────── */
 
 .reticle {

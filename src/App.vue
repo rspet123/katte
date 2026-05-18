@@ -37,4 +37,3 @@ body {
 /* Inter via Google Fonts — weight 300 and 800 only */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&display=swap');
 </style>
-

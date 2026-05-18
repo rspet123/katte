@@ -16,9 +16,9 @@ defineExpose({ panelRef })
   <section class="panel panel--dark" id="about" ref="panelRef">
     <div class="panel-inner">
       <p class="eyebrow">02 / 03 · Who am I.</p>
-      <h2 class="section-title">About.</h2>
+      <h2 class="section-title">about.</h2>
     </div>
-
+    <p class="scroll-hint">Scroll</p>
     <a class="scroll-cue" href="#contact" aria-label="Scroll to Contact">
       <span class="eyebrow">Contact</span>
       <span class="scroll-cue__arrow" v-html="angArrow" />

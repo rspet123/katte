@@ -74,8 +74,11 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
 
     <div class="panel-inner">
       <p class="eyebrow">p o r t f o l i o</p>
-      <p class="hero-sub">RESTRAINT IS A CREATIVE POSITION</p>
+      <p class="hero-sub">[ RESTRAINT IS A CREATIVE POSITION ]</p>
+      <p class="hero-sub">[ SYSTEMS BUILT WITH INTENT ]</p>
     </div>
+
+    <p class="scroll-hint">Scroll</p>
 
     <a class="scroll-cue" href="#work" aria-label="Scroll to Work">
       <span class="eyebrow">Work</span>

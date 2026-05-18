@@ -16,7 +16,7 @@ defineExpose({ panelRef })
   <section class="panel panel--light" id="contact" ref="panelRef">
     <div class="panel-inner">
       <p class="eyebrow">03 / 03 · Contact</p>
-      <h2 class="section-title">Contact.</h2>
+      <h2 class="section-title">contact.</h2>
     </div>
 
     <button
