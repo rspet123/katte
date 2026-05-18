@@ -33,7 +33,7 @@ const runGlitch = () => {
   const el = heroLogoRef.value
   if (!el) return
 
-  const flashCount = rand(1, 3)
+  const flashCount = rand(2, 4)
   let cursor = 0
 
   for (let i = 0; i < flashCount; i++) {
@@ -99,7 +99,7 @@ onUnmounted(() => {
       <div class="hero-logo" ref="heroLogoRef" v-html="logoSvg" aria-hidden="true" />
 
       <div class="panel-inner">
-        <p class="eyebrow">Selected Works · 2019–2024</p>
+        <p class="eyebrow">p o r t f o l i o</p>
         <p class="hero-sub">
           RESTRAINT IS A CREATIVE POSITION
         </p>
@@ -119,13 +119,13 @@ onUnmounted(() => {
     <!-- Panel overflow:hidden doesn't clip it — the mark is a sibling,  -->
     <!-- not a child, of any panel.                                       -->
     <div class="bridge" aria-hidden="true">
-      <div class="bridge-mark bridge-mark--on-dark" v-html="burstline" />
+      <div class="bridge-mark" v-html="burstline" />
     </div>
 
     <!-- ── Panel 2: Work ──────────────────────────────────────────── -->
     <section class="panel panel--light" id="work">
       <div class="panel-inner">
-        <p class="eyebrow">01 / 03 · Selected Works</p>
+        <p class="eyebrow">01 / 03 · Selected Works / xx19–xx26</p>
         <h2 class="section-title">Work.</h2>
       </div>
 
@@ -137,7 +137,7 @@ onUnmounted(() => {
 
     <!-- ── Bridge ────────────────────────────────────────────────── -->
     <div class="bridge" aria-hidden="true">
-      <div class="bridge-mark bridge-mark--on-light bridge-mark--flipped" v-html="burstline" />
+      <div class="bridge-mark bridge-mark--flipped" v-html="burstline" />
     </div>
 
     <!-- ── Panel 3: About ─────────────────────────────────────────── -->
@@ -155,7 +155,7 @@ onUnmounted(() => {
 
     <!-- ── Bridge ────────────────────────────────────────────────── -->
     <div class="bridge" aria-hidden="true">
-      <div class="bridge-mark bridge-mark--on-dark" v-html="burstline" />
+      <div class="bridge-mark" v-html="burstline" />
     </div>
 
     <!-- ── Panel 4: Contact ───────────────────────────────────────── -->
@@ -342,13 +342,16 @@ onUnmounted(() => {
 .scroll-cue--dark       { color: rgba(0, 0, 0, 0.3); }
 .scroll-cue--dark:hover { color: rgba(0, 0, 0, 0.7); }
 
-/* ang_arrow points ↙ by default; rotate 135° CW → ↓ */
+/* Reset the heading-context bottom margin so the eyebrow aligns with the arrow. */
+.scroll-cue .eyebrow    { margin: 0; }
+
 .scroll-cue__arrow {
   display: flex;
   width: 18px;
   height: 18px;
-  transform: rotate(135deg);
+  transform: rotate(90deg);
   flex-shrink: 0;
+
 }
 
 .scroll-cue__arrow :deep(svg) {
@@ -367,6 +370,11 @@ onUnmounted(() => {
   position: relative;
   overflow: visible;
   z-index: 20;
+  /* Blend bridge's white burstline against the panel backdrop.            */
+  /* difference + white = inversion of whatever is visually behind.        */
+  /* Panels are in scroll-root's stacking context; .bridge composites      */
+  /* into that same context, so they are the backdrop.                     */
+  mix-blend-mode: difference;
 }
 
 .bridge-mark {
@@ -382,10 +390,10 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-.bridge-mark :deep(svg) { width: 100%; height: 100%; }
+/* Fill white — difference(white, backdrop) = invert(backdrop).           */
+/* The shape has no independent colour; it is a transparent inversion.    */
+.bridge-mark :deep(svg) { width: 100%; height: 100%; fill: #ffffff; }
 
-.bridge-mark--on-dark  { color: rgba(255, 255, 255, 0.25); }
-.bridge-mark--on-light { color: rgba(0,   0,   0,   0.18); }
 .bridge-mark--flipped  { transform: translate(-50%, -50%) scaleX(-1); }
 
 /* ── ANIMATIONS ────────────────────────────────────────────────────────── */
