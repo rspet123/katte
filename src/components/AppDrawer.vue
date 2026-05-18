@@ -76,7 +76,7 @@ const emit = defineEmits<{ close: [] }>()
 .drawer__tex {
   position: absolute;
   inset: 0;
-  background: url('@/assets/svg/textures/bg_tex_2.png') repeat;
+  background: url('@/assets/svg/textures/wrap_tex_2.png') repeat;
   opacity: 0.045;
   pointer-events: none;
   z-index: 0;

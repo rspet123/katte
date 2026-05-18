@@ -19,7 +19,7 @@ defineExpose({ panelRef })
 const eyebrowRef = ref<HTMLElement | null>(null)
 const { text: whoText } = useTextGlitch({
   primary:    'WHO AM I.',
-  alternates: ['WHO AM I?', 'WHO ARE YOU?', 'WHY ARE YOU HERE?', "WHAT AM I?"],
+  alternates: ['WHO AM I?', 'WHO ARE YOU?', 'WHY ARE YOU HERE?', "WHAT AM I?", "WHAT I DO."],
   el: eyebrowRef,
 })
 </script>

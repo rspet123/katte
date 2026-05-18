@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
 import resistorRaw from '../assets/svg/micrographics/resistor.svg?raw'
 import vTypewriter from '../directives/v-typewriter.js'
+import { useTextGlitch } from '../utils/useTextGlitch'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 const angArrow = computed(() => fixStrokes(angArrowRaw))
@@ -12,9 +13,20 @@ defineProps<{ isActive: boolean }>()
 const emit = defineEmits<{ toggle: [] }>()
 
 const panelRef = ref<HTMLElement | null>(null)
-const currentYear = new Date().getFullYear()
+const yy = new Date().getFullYear().toString().slice(-2)
 
 defineExpose({ panelRef })
+
+// ── Eyebrow text glitch ───────────────────────────────────────────────────
+const workEyebrowRef = ref<HTMLElement | null>(null)
+const { text: workText } = useTextGlitch({
+  primary:    `Work Experience // xx22–xx${yy}`,
+  alternates: [
+    `Selected Works // xx19–xx${yy}`,
+    'Passion Projects // now–∞',
+  ],
+  el: workEyebrowRef,
+})
 </script>
 
 <template>
@@ -22,7 +34,7 @@ defineExpose({ panelRef })
     <p class="eyebrow corner-label" v-typewriter="{text: '[ KATTE // LABS ]', seconds: 2.5}"></p>
 
     <div class="panel-inner">
-      <p class="eyebrow">01 / 03 · Selected Works // xx19–xx{{currentYear.toString().slice(-2)}}</p>
+      <p class="eyebrow" ref="workEyebrowRef">01 / 03 · {{ workText }}</p>
       <span class="micrographic" v-html="resistor" />
       <h2 class="section-title">w<em>o</em>rk.</h2>
     </div>

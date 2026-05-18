@@ -19,7 +19,7 @@ defineExpose({ panelRef })
 const findMeRef = ref<HTMLElement | null>(null)
 const { text: findMeText } = useTextGlitch({
   primary:    'FIND ME // HERE',
-  alternates: ['FIND ME!', "I'M HERE", 'WHERE AM I?'],
+  alternates: ['HOW CAN YOU FIND ME?', "WHERE CAN YOU FIND ME?", 'WHERE AM I?'],
   el: findMeRef,
 })
 </script>
