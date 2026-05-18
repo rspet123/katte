@@ -51,6 +51,16 @@
   line-height: 1.05;
 }
 
+.micrographic {
+  display: block;
+  width: 8vw;
+}
+
+.micrographic svg {
+  width: 100%;
+  height: auto;
+}
+
 /* ── SCROLL CUE ──────────────────────────────────────────────────────────── */
 
 .scroll-cue {

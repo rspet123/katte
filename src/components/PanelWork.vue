@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
+import resistorRaw from '../assets/svg/micrographics/resistor.svg?raw'
 import vTypewriter from '../directives/v-typewriter.js'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 const angArrow = computed(() => fixStrokes(angArrowRaw))
+const resistor = computed(() => fixStrokes(resistorRaw).replace('<svg ', '<svg fill="currentColor" '))
 
 defineProps<{ isActive: boolean }>()
 const emit = defineEmits<{ toggle: [] }>()
@@ -21,7 +23,8 @@ defineExpose({ panelRef })
 
     <div class="panel-inner">
       <p class="eyebrow">01 / 03 · Selected Works // xx19–xx{{currentYear.toString().slice(-2)}}</p>
-      <h2 class="section-title">work.</h2>
+      <span class="micrographic" v-html="resistor" />
+      <h2 class="section-title">w<em>o</em>rk.</h2>
     </div>
 
     <p class="scroll-hint">Scroll</p>

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 
-import angArrowRaw   from '../assets/svg/micrographics/ang_arrow.svg?raw'
-import burstlineRaw  from '../assets/svg/micrographics/burstline.svg?raw'
+import burstlineRaw  from '../assets/svg/micrographics/long_burstline.svg?raw'
 import reticle1Raw   from '../assets/svg/micrographics/target_circle.svg?raw'
 import reticle2Raw   from '../assets/svg/micrographics/target_circle_2.svg?raw'
 import reticle3Raw   from '../assets/svg/micrographics/target_circle_3.svg?raw'
@@ -12,12 +11,16 @@ import PanelWork    from './PanelWork.vue'
 import PanelAbout   from './PanelAbout.vue'
 import PanelContact from './PanelContact.vue'
 
+import AppDrawer    from './AppDrawer.vue'
+import DrawerWork   from './DrawerWork.vue'
+import DrawerAbout  from './DrawerAbout.vue'
+import DrawerContact from './DrawerContact.vue'
+
 import { generateClipPath } from '../utils/clip_path_gen'
 import { rand } from '../utils/glitch'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 
-const angArrow  = computed(() => fixStrokes(angArrowRaw))
 const burstline = computed(() => fixStrokes(burstlineRaw))
 
 // ── Reticle variants — one entry per panel (index 0 = hero, hidden).
@@ -87,6 +90,10 @@ const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Escape') activeDrawer.value = null
 }
 
+// 'about' is panel--dark, so its drawer should be light; others are light panels → dark drawer
+const LIGHT_DRAWER_PANELS = new Set(['about'])
+const drawerIsLight = computed(() => LIGHT_DRAWER_PANELS.has(activeDrawer.value ?? ''))
+
 const onScroll = () => {
   const y = scrollRootRef.value?.scrollTop ?? 0
   if (texRef.value) texRef.value.style.transform = `translateY(${y * 0.12}px)`
@@ -104,8 +111,12 @@ onMounted(() => {
         if (!entry.isIntersecting) continue
         const idx = panelElements.indexOf(entry.target as HTMLElement)
         if (idx === -1 || idx === activePanel.value) continue
-        // Hero panel (0): just update state — reticle is invisible anyway
-        if (idx === 0) { activePanel.value = 0; continue }
+        // Hero panel (0): just update state and fire logo glitch on re-entry
+        if (idx === 0) {
+          activePanel.value = 0
+          heroPanelRef.value?.triggerGlitch()
+          continue
+        }
         runReticleGlitch(() => { activePanel.value = idx })
       }
     },
@@ -142,60 +153,16 @@ onUnmounted(() => {
   />
 
   <!-- ── SIDE DRAWER ──────────────────────────────────────────────────── -->
-  <Transition name="fade">
-    <div
-      v-if="activeDrawer !== null"
-      class="drawer-backdrop"
-      @click="activeDrawer = null"
-      aria-hidden="true"
-    />
-  </Transition>
-  <Transition name="drawer-slide">
-    <aside
-      v-if="activeDrawer !== null"
-      class="drawer"
-      role="complementary"
-      :aria-label="`${activeDrawer} details`"
-    >
-      <div class="drawer__header">
-        <button class="drawer__close" @click="activeDrawer = null" aria-label="Close panel">
-          <span class="drawer__close-icon" v-html="angArrow" />
-        </button>
-      </div>
-      <div class="drawer__body">
-        <template v-if="activeDrawer === 'work'">
-          <p class="drawer__eyebrow">Browse</p>
-          <h3 class="drawer__title">Works.</h3>
-          <ul class="drawer__list">
-            <li>AI</li>
-            <li>Agents</li>
-            <li>Data</li>
-            <li>Dashboards</li>
-          </ul>
-        </template>
-        <template v-else-if="activeDrawer === 'about'">
-          <p class="drawer__eyebrow">Capabilities</p>
-          <h3 class="drawer__title">Skills.</h3>
-          <ul class="drawer__list">
-            <li>Typography</li>
-            <li>Motion Design</li>
-            <li>Web Development</li>
-            <li>Brand Systems</li>
-          </ul>
-        </template>
-        <template v-else-if="activeDrawer === 'contact'">
-          <p class="drawer__eyebrow">Links</p>
-          <h3 class="drawer__title">Connect.</h3>
-          <ul class="drawer__list">
-            <li>Email</li>
-            <li>LinkedIn</li>
-            <li>GitHub</li>
-            <li>Instagram</li>
-          </ul>
-        </template>
-      </div>
-    </aside>
-  </Transition>
+  <AppDrawer
+    :is-open="activeDrawer !== null"
+    :is-light="drawerIsLight"
+    :label="activeDrawer ? `${activeDrawer} details` : undefined"
+    @close="activeDrawer = null"
+  >
+    <DrawerWork    v-if="activeDrawer === 'work'" />
+    <DrawerAbout   v-else-if="activeDrawer === 'about'" />
+    <DrawerContact v-else-if="activeDrawer === 'contact'" />
+  </AppDrawer>
 
   <!-- ── SCROLL ROOT ────────────────────────────────────────────────────── -->
   <div class="scroll-root" ref="scrollRootRef" :class="{ 'scroll-root--pushed': activeDrawer !== null }">
@@ -339,6 +306,7 @@ onUnmounted(() => {
 
 .bridge {
   height: 0;
+  top: .25vh;
   position: relative;
   overflow: visible;
   z-index: 20;
@@ -347,159 +315,14 @@ onUnmounted(() => {
 
 .bridge-mark {
   position: absolute;
-  top: 0;
-  left: 33%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  width: 320px;
-  height: 80px;
+  width: 105%;
   pointer-events: none;
 }
 
 .bridge-mark :deep(svg) { width: 100%; height: 100%; fill: #ffffff; }
 
-.bridge-mark--flipped { left: 70%; transform: translate(-50%, -50%) scaleX(-1); }
+.bridge-mark--flipped { right: 50%; transform: translate(-50%, -50%) scaleX(-1); }
 
-/* ── DRAWER BACKDROP ───────────────────────────────────────────────────── */
-
-.drawer-backdrop {
-  position: fixed;
-  inset: 0;
-  right: var(--drawer-w);
-  z-index: 150;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* ── DRAWER ────────────────────────────────────────────────────────────── */
-
-.drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: var(--drawer-w);
-  background: #0d0d0d;
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-  z-index: 200;
-  display: flex;
-  flex-direction: column;
-  padding: 60px 40px;
-  overflow-y: auto;
-}
-
-.drawer__header {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 48px;
-}
-
-.drawer__close {
-  width: 32px;
-  height: 32px;
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: border-color 200ms ease;
-}
-
-.drawer__close:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.drawer__close-icon {
-  display: flex;
-  width: 14px;
-  height: 14px;
-  color: rgba(255, 255, 255, 0.5);
-  transform: rotate(180deg);
-  transition: color 200ms ease;
-}
-
-.drawer__close:hover .drawer__close-icon {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.drawer__close-icon :deep(svg) {
-  width: 100%;
-  height: 100%;
-}
-
-.drawer__eyebrow {
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
-  margin: 0 0 16px;
-}
-
-.drawer__title {
-  font-size: clamp(28px, 4vw, 48px);
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-  margin: 0 0 32px;
-  line-height: 1.05;
-}
-
-.drawer__text {
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.03em;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.75;
-  margin: 0;
-}
-
-.drawer__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.drawer__list li {
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  cursor: default;
-  transition: color 200ms ease;
-}
-
-.drawer__list li:last-child {
-  border-bottom: none;
-}
-
-.drawer__list li:hover {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* ── TRANSITIONS ───────────────────────────────────────────────────────── */
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 300ms ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.drawer-slide-enter-active,
-.drawer-slide-leave-active {
-  transition: transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.drawer-slide-enter-from,
-.drawer-slide-leave-to {
-  transform: translateX(100%);
-}
 </style>

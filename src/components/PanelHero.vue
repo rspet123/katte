@@ -21,7 +21,7 @@ const emit = defineEmits<{ toggle: [] }>()
 
 // ── Expose panel element for the IntersectionObserver in the parent ─────────
 const panelRef = ref<HTMLElement | null>(null)
-defineExpose({ panelRef })
+
 
 // ── Glitch effect ───────────────────────────────────────────────────────────
 const heroLogoRef = ref<HTMLElement | null>(null)
@@ -68,6 +68,8 @@ const scheduleGlitch = () => {
   glitchTimeout = setTimeout(() => { runGlitch(); scheduleGlitch() }, delay)
 }
 
+defineExpose({ panelRef, triggerGlitch: runGlitch })
+
 onMounted(() => scheduleGlitch())
 onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
 </script>
@@ -76,17 +78,16 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
   <section class="panel panel--dark" id="hero" ref="panelRef">
     <div class="topo-texture" aria-hidden="true" />
 
-    <p class="eyebrow corner-label" v-typewriter="{text: '[ ASSET_ID : RWS_1999 ]', seconds: 2.5}"></p>
+    <p class="eyebrow corner-label" v-typewriter="{text: '[ VER. // 0.0.1-alpha ]', seconds: 2.5}"></p>
 
     <div class="hero-logo" ref="heroLogoRef" v-html="logoSvg" aria-hidden="true" />
 
     <div class="panel-inner">
       <p class="eyebrow portfolio-label">
-        p o r t f o l i o
+        p o r t f o l i o //
         <span class="portfolio-globe" v-html="globeSvg" aria-hidden="true" />
       </p>
-      <p class="hero-sub">[ RESTRAINT IS A CREATIVE POSITION ]</p>
-      <p class="hero-sub">[ SYSTEMS BUILT WITH INTENT ]</p>
+      <p class="eyebrow">[ BUILT WITH INTENT ]</p>
     </div>
 
     <p class="scroll-hint">Scroll</p>
