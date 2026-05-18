@@ -1,11 +1,11 @@
 <svg width="540" height="247" viewBox="0 0 540 247" fill="none" xmlns="http://www.w3.org/2000/svg">
-<line x1="1.24893" y1="131.151" x2="529.545" y2="131.151" stroke="#FFFAEE" stroke-width="2.49785"/>
-<path d="M221.06 9L221.06 238.558" stroke="#FFFAEE" stroke-width="2.49785"/>
-<line x1="295.758" y1="58.221" x2="145.627" y2="208.352" stroke="#FFFAEE" stroke-width="2.49785"/>
-<circle cx="221.06" cy="7.49356" r="7.49356" fill="#FFFAEE"/>
-<circle cx="532.043" cy="131.15" r="7.49356" fill="#FFFAEE"/>
-<circle cx="7.49356" cy="131.15" r="7.49356" fill="#FFFAEE"/>
-<circle cx="221.06" cy="238.558" r="7.49356" fill="#FFFAEE"/>
-<circle cx="144.876" cy="209.833" r="7.49356" fill="#FFFAEE"/>
-<circle cx="294.747" cy="59.9623" r="7.49356" fill="#FFFAEE"/>
+<line x1="1.24893" y1="131.151" x2="529.545" y2="131.151" stroke="#000000" stroke-width="2.49785"/>
+<path d="M221.06 9L221.06 238.558" stroke="#000000" stroke-width="2.49785"/>
+<line x1="295.758" y1="58.221" x2="145.627" y2="208.352" stroke="#000000" stroke-width="2.49785"/>
+<circle cx="221.06" cy="7.49356" r="7.49356" fill="#000000"/>
+<circle cx="532.043" cy="131.15" r="7.49356" fill="#000000"/>
+<circle cx="7.49356" cy="131.15" r="7.49356" fill="#000000"/>
+<circle cx="221.06" cy="238.558" r="7.49356" fill="#000000"/>
+<circle cx="144.876" cy="209.833" r="7.49356" fill="#000000"/>
+<circle cx="294.747" cy="59.9623" r="7.49356" fill="#000000"/>
 </svg>

@@ -65,7 +65,6 @@ const emit = defineEmits<{ close: [] }>()
   bottom: 0;
   width: var(--drawer-w);
   background: #0d0d0d;
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 200;
   display: flex;
   flex-direction: column;
@@ -97,8 +96,8 @@ const emit = defineEmits<{ close: [] }>()
 .drawer__tex {
   position: absolute;
   inset: 0;
-  background: url('@/assets/svg/textures/wrap_tex_2.png') repeat;
-  opacity: 0.045;
+  background: url('@/assets/svg/textures/bg_tex_2.png') repeat;
+  opacity: 0.015;
   pointer-events: none;
   z-index: 0;
 }
@@ -238,6 +237,10 @@ const emit = defineEmits<{ close: [] }>()
 
 .drawer--light :deep(.drawer__list li:hover) {
   color: rgba(0, 0, 0, 0.9);
+}
+
+.drawer--light :deep(.drawer__detail-inner) {
+  filter: brightness(0);
 }
 
 /* ── TRANSITIONS ───────────────────────────────────────────────────────── */
