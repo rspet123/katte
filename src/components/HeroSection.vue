@@ -34,7 +34,9 @@ const activePanel = ref(0)
 const reticleRef  = ref<HTMLElement | null>(null)
 
 const reticleSvg = computed(() => {
-  const raw = RETICLE_SVGS[activePanel.value] ?? RETICLE_SVGS[RETICLE_SVGS.length - 1]
+  // Panel 0 (hero) is null → no reticle. Beyond the array → repeat last.
+  const idx = Math.min(activePanel.value, RETICLE_SVGS.length - 1)
+  const raw = RETICLE_SVGS[idx]
   return raw ? fixStrokes(raw) : ''
 })
 
@@ -251,10 +253,13 @@ onUnmounted(() => {
   pointer-events: none;
   z-index: 100;
   opacity: 0;
-  transition: opacity 500ms ease;
+  transition: opacity 0ms;
 }
 
-.reticle--visible { opacity: 1; }
+.reticle--visible {
+  opacity: 1;
+  transition: opacity 500ms ease;
+}
 
 .reticle--glitching {
   filter:
