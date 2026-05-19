@@ -8,7 +8,7 @@ const glyphMap = import.meta.glob('../assets/svg/glyph/*.svg', {
 
 const getGlyph = (name: string): string | null => {
   const key = Object.keys(glyphMap).find(k => k.endsWith(`/${name}.svg`))
-  return key ? glyphMap[key] : null
+  return key ? (glyphMap[key] ?? null) : null
 }
 
 export interface ProjectModalData {
