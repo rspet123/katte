@@ -49,7 +49,7 @@ const onTouchEnd = (e: TouchEvent) => {
   <Transition name="drawer-slide">
     <aside
       v-if="isOpen"
-      class="drawer"
+      class="drawer scrollbar-thin"
       :class="{ 'drawer--light': isLight }"
       role="complementary"
       :aria-label="label"
@@ -97,27 +97,6 @@ const onTouchEnd = (e: TouchEvent) => {
   padding: 60px 40px;
   overflow-x: hidden;
   overflow-y: auto;
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: var(--c-scrollbar) transparent;
-}
-
-.drawer::-webkit-scrollbar {
-  width: 3px;
-}
-
-.drawer::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.drawer::-webkit-scrollbar-thumb {
-  background: var(--c-scrollbar);
-  border-radius: 0;
-  transition: background 250ms ease;
-}
-
-.drawer::-webkit-scrollbar-thumb:hover {
-  background: var(--c-accent);
 }
 
 .drawer__tex {
@@ -178,7 +157,29 @@ const onTouchEnd = (e: TouchEvent) => {
 }
 
 /* ── SLOTTED CONTENT STYLES ───────────────────────────────────────────── */
+:deep(.drawer__title-row) {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 
+:deep(.drawer__detail) {
+  display: block;
+  flex-shrink: 0;
+  width: 80px;
+  opacity: 1;
+  margin-top: 20px;
+}
+
+:deep(.drawer__detail-inner) {
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+:deep(.drawer__detail-inner svg) {
+  width: 100%;
+  height: auto;
+}
 :deep(.drawer__eyebrow) {
   font-size: 10px;
   font-weight: 400;
@@ -217,7 +218,7 @@ const onTouchEnd = (e: TouchEvent) => {
   font-weight: 400;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--c-text-mid);
   padding: 14px 0;
   border-bottom: 1px solid var(--c-ghost);
   cursor: default;
@@ -235,41 +236,41 @@ const onTouchEnd = (e: TouchEvent) => {
 /* ── DRAWER LIGHT THEME ────────────────────────────────────────────────── */
 
 .drawer--light {
-  background: #f0efea;
-  border-left-color: rgba(0, 0, 0, 0.08);
+  background: var(--c-light-surface);
+  border-left-color: var(--c-light-rule);
 }
 
 .drawer--light .drawer__close {
-  border-color: rgba(0, 0, 0, 0.15);
+  border-color: var(--c-light-border);
 }
 
 .drawer--light .drawer__close:hover {
-  border-color: rgba(0, 0, 0, 0.4);
+  border-color: var(--c-light-text-muted);
 }
 
 .drawer--light .drawer__close-icon {
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--c-light-text-mid);
 }
 
 .drawer--light .drawer__close:hover .drawer__close-icon {
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--c-light-text-strong);
 }
 
 .drawer--light :deep(.drawer__eyebrow) {
-  color: rgba(0, 0, 0, 0.4);
+  color: var(--c-light-text-muted);
 }
 
 .drawer--light :deep(.drawer__title) {
-  color: #0d0d0d;
+  color: var(--c-surface-2);
 }
 
 .drawer--light :deep(.drawer__list li) {
-  color: rgba(0, 0, 0, 0.45);
-  border-bottom-color: rgba(0, 0, 0, 0.07);
+  color: var(--c-light-text-body);
+  border-bottom-color: var(--c-light-rule);
 }
 
 .drawer--light :deep(.drawer__list li:hover) {
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--c-light-text-strong);
 }
 
 .drawer--light :deep(.drawer__detail-inner) {

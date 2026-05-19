@@ -1,8 +1,40 @@
+/* ── ROOT TOKENS ────────────────────────────────────────────────────────── */
+
+:root {
+  --drawer-w: 50vw;
+}
+
+/* ── SCROLLBAR UTILITY ───────────────────────────────────────────────────── */
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-scrollbar) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--c-scrollbar);
+  border-radius: 0;
+  transition: background 250ms ease;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--c-accent);
+}
+
 /* ── PANELS ──────────────────────────────────────────────────────────────── */
 
 .panel {
   height: 100vh;
   scroll-snap-align: start;
+  scroll-snap-stop: always;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -32,7 +64,7 @@
 }
 
 .panel--dark  .eyebrow { color: var(--c-muted); }
-.panel--light .eyebrow { color: rgba(0, 0, 0, 0.45); }
+.panel--light .eyebrow { color: var(--c-light-text-body); }
 
 .corner-label {
   position: absolute;
@@ -77,8 +109,8 @@
 }
 
 .scroll-cue:hover       { color: var(--c-text-strong); }
-.scroll-cue--dark       { color: rgba(0, 0, 0, 0.3); }
-.scroll-cue--dark:hover { color: rgba(0, 0, 0, 0.7); }
+.scroll-cue--dark       { color: var(--c-light-text-dim); }
+.scroll-cue--dark:hover { color: var(--c-light-text-hover); }
 
 .scroll-cue .eyebrow { margin: 0; }
 

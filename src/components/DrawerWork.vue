@@ -166,29 +166,8 @@ const experience: ExpandGroup[] = [
   flex: 0 0 40%;
 }
 
-.drawer__title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.drawer__detail {
-  display: block;
-  flex-shrink: 0;
-  width: 80px;
-  opacity: 1;
-  margin-top: 20px;
-}
-
 .drawer__detail-inner {
-  display: block;
-  filter: brightness(0) invert(1);
   transform: scale(3) translate(-40%, 30%);
-}
-
-.drawer__detail-inner :deep(svg) {
-  width: 100%;
-  height: auto;
 }
 
 @media (max-width: 768px) {
@@ -206,7 +185,7 @@ const experience: ExpandGroup[] = [
   }
 }
 
-/* ── MODAL TRANSITION ─────────────────────────────────────────────────── */
+/* ── MODAL TRANSITION ─────────────────────────────────────────────────────── */
 
 .modal-fade-enter-active,
 .modal-fade-leave-active {

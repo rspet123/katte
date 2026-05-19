@@ -29,4 +29,15 @@
   /* ── OVERLAY & CHROME ───────────────────────────────────── */
   --c-backdrop:  rgba(0, 0, 0, 0.92);          /* modal backdrop             */
   --c-scrollbar: rgba(136, 135, 128, 0.35);    /* scrollbar thumb            */
+
+  /* ── LIGHT CONTEXT: BLACK ALPHAS ─────────────────────────── */
+  --c-light-surface:     #f0efea;                          /* elevated light surface: work/contact drawers */
+  --c-light-rule:        rgba(0, 0, 0, 0.08);              /* subtlest border / rules in light sections    */
+  --c-light-border:      rgba(0, 0, 0, 0.15);              /* standard border                              */
+  --c-light-text-dim:    rgba(0, 0, 0, 0.30);              /* section labels, scroll cues                  */
+  --c-light-text-muted:  rgba(0, 0, 0, 0.40);              /* metadata, secondary labels, eyebrows         */
+  --c-light-text-body:   rgba(0, 0, 0, 0.45);              /* body copy, list items                        */
+  --c-light-text-mid:    rgba(0, 0, 0, 0.50);              /* icons, supporting text                       */
+  --c-light-text-hover:  rgba(0, 0, 0, 0.70);              /* hover state                                  */
+  --c-light-text-strong: rgba(0, 0, 0, 0.90);              /* hover / near-full                            */
 }

@@ -11,6 +11,12 @@ const groups: ExpandGroup[] = [
       { label: 'GITHUB //', href: 'https://github.com/rspet123' }
       ]
   },
+  {
+    label: 'Me', items: [
+      { label: 'R. Spencer, Software Engineer, with a focus on backend development, AI, and systems engineering.' },
+      { label: 'I have a passion for building efficient, scalable systems and leveraging AI to solve complex problems.' }
+    ]
+  }
 ]
 </script>
 
@@ -28,29 +34,8 @@ const groups: ExpandGroup[] = [
 </template>
 
 <style scoped>
-.drawer__title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.drawer__detail {
-  display: block;
-  flex-shrink: 0;
-  width: 80px;
-  opacity: 1;
-  margin-top: 20px;
-}
-
 .drawer__detail-inner {
-  display: block;
-  filter: brightness(0) invert(1);
   transform: scale(4) translate(-40%, 5%);
-}
-
-.drawer__detail-inner :deep(svg) {
-  width: 100%;
-  height: auto;
 }
 
 @media (max-width: 768px) {

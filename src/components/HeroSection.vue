@@ -205,7 +205,7 @@ onUnmounted(() => {
   </AppDrawer>
 
   <!-- ── SCROLL ROOT ────────────────────────────────────────────────────── -->
-  <div class="scroll-root" ref="scrollRootRef" :class="{ 'scroll-root--pushed': activeDrawer !== null }">
+  <div class="scroll-root scrollbar-thin" ref="scrollRootRef" :class="{ 'scroll-root--pushed': activeDrawer !== null }">
 
     <PanelHero
       ref="heroPanelRef"
@@ -244,12 +244,6 @@ onUnmounted(() => {
 
   </div>
 </template>
-
-<style>
-:root {
-  --drawer-w: 50vw;
-}
-</style>
 
 <style scoped>
 /* ── TEXTURE OVERLAY ──────────────────────────────────────────────────── */
@@ -317,9 +311,6 @@ onUnmounted(() => {
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(136, 135, 128, 0.35) transparent;
 }
 
 .scroll-root--pushed {
@@ -330,24 +321,6 @@ onUnmounted(() => {
 
 .scroll-root--pushed::-webkit-scrollbar { width: 0; }
 .scroll-root--pushed { scrollbar-width: none; }
-
-.scroll-root::-webkit-scrollbar {
-  width: 3px;
-}
-
-.scroll-root::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scroll-root::-webkit-scrollbar-thumb {
-  background: rgba(136, 135, 128, 0.35);
-  border-radius: 0;
-  transition: background 250ms ease;
-}
-
-.scroll-root::-webkit-scrollbar-thumb:hover {
-  background: #ff2d78;
-}
 
 /* ── BRIDGE ────────────────────────────────────────────────────────────── */
 /* Zero height — not a snap point. overflow:visible lets the mark extend   */
