@@ -267,6 +267,12 @@ onUnmounted(() => {
   will-change: transform;
 }
 
+@media (max-width: 768px) {
+  .tex-overlay {
+    opacity: 0.1;
+  }
+}
+
 /* ── RETICLE ───────────────────────────────────────────────────────────── */
 
 .reticle {
