@@ -13,6 +13,28 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{ close: [] }>()
+
+// ── Swipe-right-to-close ──────────────────────────────────────────────────
+const SWIPE_MIN_PX   = 50
+const SWIPE_MAX_VERT = 60
+
+let touchStartX = 0
+let touchStartY = 0
+
+const onTouchStart = (e: TouchEvent) => {
+  const touch = e.touches[0]
+  if (!touch) return
+  touchStartX = touch.clientX
+  touchStartY = touch.clientY
+}
+
+const onTouchEnd = (e: TouchEvent) => {
+  const touch = e.changedTouches[0]
+  if (!touch) return
+  const dx = touch.clientX - touchStartX  // positive = moved right
+  const dy = Math.abs(touch.clientY - touchStartY)
+  if (dx >= SWIPE_MIN_PX && dy <= SWIPE_MAX_VERT) emit('close')
+}
 </script>
 
 <template>
@@ -31,6 +53,8 @@ const emit = defineEmits<{ close: [] }>()
       :class="{ 'drawer--light': isLight }"
       role="complementary"
       :aria-label="label"
+      @touchstart.passive="onTouchStart"
+      @touchend.passive="onTouchEnd"
     >
       <div class="drawer__tex" aria-hidden="true" />
       <div class="drawer__header">
@@ -71,6 +95,7 @@ const emit = defineEmits<{ close: [] }>()
   display: flex;
   flex-direction: column;
   padding: 60px 40px;
+  overflow-x: hidden;
   overflow-y: auto;
   /* Firefox */
   scrollbar-width: thin;
@@ -286,5 +311,11 @@ const emit = defineEmits<{ close: [] }>()
 .drawer-slide-enter-from,
 .drawer-slide-leave-to {
   transform: translateX(100%);
+}
+
+@media (max-width: 768px) {
+  .drawer {
+    padding: 8vw 6vw;
+  }
 }
 </style>

@@ -90,6 +90,42 @@ const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Escape') activeDrawer.value = null
 }
 
+// Maps panel index → drawer name (null = no drawer for this panel)
+const PANEL_DRAWER_NAMES: (string | null)[] = [null, 'work', 'about', 'contact']
+
+// ── Swipe-to-open gesture ──────────────────────────────────────────────────
+const SWIPE_EDGE_PX   = 40  // touch must start within this many px of the right edge
+const SWIPE_MIN_PX    = 50  // minimum horizontal travel to count as a swipe
+const SWIPE_MAX_VERT  = 60  // maximum vertical drift before we ignore the swipe
+
+let touchStartX = 0
+let touchStartY = 0
+let swipeTracking = false
+
+const onTouchStart = (e: TouchEvent) => {
+  const touch = e.touches[0]
+  if (!touch) return
+  touchStartX = touch.clientX
+  touchStartY = touch.clientY
+  // Only track swipes that begin near the right edge
+  swipeTracking = touchStartX >= window.innerWidth - SWIPE_EDGE_PX
+}
+
+const onTouchEnd = (e: TouchEvent) => {
+  if (!swipeTracking) return
+  swipeTracking = false
+
+  const touch = e.changedTouches[0]
+  if (!touch) return
+  const dx = touchStartX - touch.clientX  // positive = moved left
+  const dy = Math.abs(touch.clientY - touchStartY)
+
+  if (dx >= SWIPE_MIN_PX && dy <= SWIPE_MAX_VERT && activeDrawer.value === null) {
+    const drawerName = PANEL_DRAWER_NAMES[activePanel.value] ?? null
+    if (drawerName) activeDrawer.value = drawerName
+  }
+}
+
 // 'about' is panel--dark, so its drawer should be light; others are light panels → dark drawer
 const LIGHT_DRAWER_PANELS = new Set(['about'])
 const drawerIsLight = computed(() => LIGHT_DRAWER_PANELS.has(activeDrawer.value ?? ''))
@@ -101,6 +137,8 @@ const onScroll = () => {
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
+  window.addEventListener('touchstart', onTouchStart, { passive: true })
+  window.addEventListener('touchend', onTouchEnd, { passive: true })
 
   // ── Texture parallax ───────────────────────────────────────────────────
   scrollRootRef.value?.addEventListener('scroll', onScroll, { passive: true })
@@ -136,6 +174,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('touchstart', onTouchStart)
+  window.removeEventListener('touchend', onTouchEnd)
   scrollRootRef.value?.removeEventListener('scroll', onScroll)
   panelObserver?.disconnect()
 })

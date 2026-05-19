@@ -27,6 +27,6 @@
   --c-accent-fill:   rgba(150, 150, 150, 0.12); /* accent hover fill          */
 
   /* ── OVERLAY & CHROME ───────────────────────────────────── */
-  --c-backdrop:  rgba(0, 0, 0, 0.72);          /* modal backdrop             */
+  --c-backdrop:  rgba(0, 0, 0, 0.92);          /* modal backdrop             */
   --c-scrollbar: rgba(136, 135, 128, 0.35);    /* scrollbar thumb            */
 }

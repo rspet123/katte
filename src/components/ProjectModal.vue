@@ -53,6 +53,13 @@ onUnmounted(() => {
 
 <template>
   <Teleport to="body">
+    <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
+      <defs>
+        <filter id="h-blur">
+          <feGaussianBlur stdDeviation="8 0" />
+        </filter>
+      </defs>
+    </svg>
     <div class="modal-backdrop" @click.self="emit('close')" role="dialog" aria-modal="true" :aria-label="data.title">
       <div class="modal">
         <div class="modal__tex" aria-hidden="true" />
@@ -131,9 +138,9 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  backdrop-filter: blur(2px);
+  backdrop-filter: url('#h-blur');
+  animation: backdrop-in 400ms ease both;
 }
-
 /* ── MODAL CARD ───────────────────────────────────────────────────────── */
 
 .modal {
@@ -153,6 +160,11 @@ onUnmounted(() => {
   opacity: 0.01;
   pointer-events: none;
   z-index: 0;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes modal-in {

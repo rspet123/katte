@@ -197,10 +197,22 @@
   }
 
   .section-tab {
-    top: 66.67%;
+    top: calc(100% - 14vh);
+    bottom: auto;
+    transform: none;
   }
 
   .section-tab--active {
-    top: calc(66.67% - 27.5vh);
+    top: 25%;
+    bottom: auto;
+  }
+
+  .scroll-cue {
+    display: none;
+  }
+
+  .corner-label {
+    top: 6vw;
+    right: 6vw;
   }
 }

@@ -76,13 +76,16 @@ function startTyping(el, { text, seconds }) {
     let html = '';
     for (let i = 0; i < text.length; i++) {
       const w = charWidths[i];
-      let char;
+      let char, glow = '';
       if (i < settledCount || !/[a-zA-Z0-9]/.test(text[i])) {
         char = text[i] === ' ' ? '&nbsp;' : text[i];
       } else {
         char = randomChar(text[i]);
       }
-      html += `<span style="display:inline-block;width:${w}px;text-align:center;overflow:hidden">${char}</span>`;
+      if (i === settledCount) {
+        glow = 'text-shadow:0 0 6px currentColor,0 0 16px currentColor;';
+      }
+      html += `<span style="display:inline-block;width:${w}px;text-align:center;${glow}">${char}</span>`;
     }
 
     el.innerHTML = html;
