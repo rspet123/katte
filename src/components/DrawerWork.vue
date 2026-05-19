@@ -35,6 +35,7 @@ const projects: ExpandGroup[] = [
           stack: ['Python', 'Redis', 'SKLearn', 'MySQL'],
           status: 'IN DEVELOPMENT',
           glyphs: ['spray', 'cs', 'form'],
+          github: 'https://github.com/rspet123/cs-map-control'
         },
       },
       {
