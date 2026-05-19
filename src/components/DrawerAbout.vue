@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ExpandList from './ExpandList.vue'
 import type { ExpandGroup } from './ExpandList.vue'
-import detail4Raw from '../assets/svg/micrographics/detail/detail_4.svg?raw'
+import detail4Raw from '../assets/svg/micrographics/filled_x.svg?raw'
 
 const groups: ExpandGroup[] = [
   { label: 'Languages', items: [
@@ -75,7 +75,7 @@ const education: ExpandGroup[] = [
 .drawer__detail-inner {
   display: block;
   filter: brightness(0) invert(1);
-  transform: scale(5) translate(-40%, 60%);
+  transform: scale(2) translate(-30%, 30%);
 }
 
 .drawer__detail-inner :deep(svg) {
@@ -85,16 +85,7 @@ const education: ExpandGroup[] = [
 
 @media (max-width: 768px) {
   .drawer__detail {
-    position: absolute;
-    top: -28%;
-    left: 66%;
-    width: 90%;
-    margin-top: 0;
-    opacity: 0.6;
-  }
-
-  .drawer__detail-inner {
-    transform: scale(2.5) translate(-40%, 60%);
+    visibility: hidden;
   }
 }
 </style>

@@ -4,16 +4,20 @@ import type { ExpandGroup } from './ExpandList.vue'
 import detail3Raw from '../assets/svg/micrographics/detail/detail_3.svg?raw'
 
 const groups: ExpandGroup[] = [
-  { label: 'LinkedIn', items: [{ label: '// LINKEDIN', href: 'https://www.linkedin.com/in/robert-spencer-aa0102207/' }] },
-  { label: 'GitHub',   items: [{ label: '// GITHUB',      href: 'https://github.com/rspet123' }] },
-  { label: 'Resume',   items: [{ label: '// PDF',               href: '/resume.pdf' }] },
+  {
+    label: 'Links', items: [
+      { label: 'LINKEDIN //', href: 'https://www.linkedin.com/in/robert-spencer-aa0102207/' },
+      { label: 'RESUME //', href: '/resume.pdf' },
+      { label: 'GITHUB //', href: 'https://github.com/rspet123' }
+      ]
+  },
 ]
 </script>
 
 <template>
   <div class="drawer__title-row">
     <div>
-      <p class="drawer__eyebrow">links //</p>
+      <p class="drawer__eyebrow">me //</p>
       <h3 class="drawer__title">connect.</h3>
     </div>
     <span class="drawer__detail" aria-hidden="true">

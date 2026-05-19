@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { generateClipPath } from '@/utils/clip_path_gen'
+import { rand } from '@/utils/glitch'
+
+import neutronSvg from '../assets/svg/micrographics/neutron.svg?raw'
 
 const glyphMap = import.meta.glob('../assets/svg/glyph/*.svg', {
   eager: true,
@@ -36,8 +40,61 @@ export interface ProjectModalData {
 const props = defineProps<{ data: ProjectModalData }>()
 const emit = defineEmits<{ close: [] }>()
 
+const closing = ref(false)
+const CLOSE_DURATION = 220
+
+const close = () => {
+  if (closing.value) return
+  closing.value = true
+  setTimeout(() => emit('close'), CLOSE_DURATION)
+}
+
 const onKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') emit('close')
+  if (e.key === 'Escape') close()
+}
+
+// ── REDACTED GLITCH ──────────────────────────────────────────
+const redactedEl = ref<HTMLElement | null>(null)
+let redactedTimer: ReturnType<typeof setTimeout> | null = null
+
+const applyRedactedFlash = () => {
+  const el = redactedEl.value
+  if (!el) return
+  const caR = rand(3, 8)
+  const caC = rand(3, 8)
+  el.style.clipPath = generateClipPath(8)
+  el.style.textShadow = [
+    `-${caR}px 0 0 rgba(255, 20, 80, 0.9)`,
+    `${caC}px 0 0 rgba(0, 220, 255, 0.9)`,
+  ].join(', ')
+}
+
+const clearRedactedFlash = () => {
+  const el = redactedEl.value
+  if (!el) return
+  el.style.clipPath = ''
+  el.style.textShadow = ''
+}
+
+const onRedactedEnter = () => {
+  if (redactedTimer) clearTimeout(redactedTimer)
+  const el = redactedEl.value
+  if (!el) return
+  let cursor = 0
+  const count = rand(4, 7)
+  for (let i = 0; i < count; i++) {
+    const dur = rand(30, 80)
+    const gap = rand(20, 55)
+    setTimeout(applyRedactedFlash, cursor)
+    setTimeout(clearRedactedFlash, cursor + dur)
+    cursor += dur + gap
+  }
+  redactedTimer = setTimeout(clearRedactedFlash, cursor + 50)
+}
+
+const onRedactedLeave = () => {
+  if (redactedTimer) clearTimeout(redactedTimer)
+  clearRedactedFlash()
 }
 
 onMounted(() => {
@@ -48,6 +105,7 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown)
   document.body.style.overflow = ''
+  if (redactedTimer) clearTimeout(redactedTimer)
 })
 </script>
 
@@ -60,16 +118,17 @@ onUnmounted(() => {
         </filter>
       </defs>
     </svg>
-    <div class="modal-backdrop" @click.self="emit('close')" role="dialog" aria-modal="true" :aria-label="data.title">
+    <div class="modal-backdrop" :class="{ 'is-closing': closing }" @click.self="close" role="dialog" aria-modal="true" :aria-label="data.title">
       <div class="modal">
         <div class="modal__tex" aria-hidden="true" />
+        <span class="modal__neutron" aria-hidden="true" v-html="neutronSvg" />
         <!-- ── HEADER ─────────────────────────────────────────── -->
         <header class="modal__header">
           <span class="modal__ref eyebrow" v-if="data.ref">[ REF - {{ data.ref }} ]</span>
           <span class="modal__ref eyebrow" v-else>[ PROJECT ]</span>
           <div class="modal__header-right">
             <span v-if="data.dates" class="modal__dates eyebrow">[ {{ data.dates }} ]</span>
-            <button class="modal__close eyebrow" @click="emit('close')" aria-label="Close">[ X ]</button>
+            <button class="modal__close eyebrow" @click="close" aria-label="Close">[ X ]</button>
           </div>
         </header>
 
@@ -112,7 +171,19 @@ onUnmounted(() => {
 
         <!-- ── FOOTER LINK ────────────────────────────────────── -->
         <footer v-if="data.github || data.isPrivate" class="modal__footer">
-          <span v-if="data.isPrivate" class="modal__redacted eyebrow">[ REDACTED ]</span>
+          <span
+            v-if="data.isPrivate"
+            class="modal__redacted-wrap"
+            @mouseenter="onRedactedEnter"
+            @mouseleave="onRedactedLeave"
+          >
+            <span class="modal__redacted-label eyebrow" aria-hidden="true">[ REDACTED ]</span>
+            <span
+              ref="redactedEl"
+              class="modal__redacted-blocks eyebrow"
+              aria-label="Source redacted"
+            >▓▓▓▓▓▓▓▓▓</span>
+          </span>
           <a
             v-else
             :href="data.github"
@@ -162,14 +233,49 @@ onUnmounted(() => {
   z-index: 0;
 }
 
+.modal__neutron {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 5vh;
+  height: 5vh;
+  opacity: 0.55;
+  pointer-events: none;
+  display: flex;
+  z-index: 0;
+  filter: brightness(0) invert(1);
+}
+
+.modal__neutron :deep(svg) {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 @keyframes backdrop-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
+@keyframes backdrop-out {
+  to { opacity: 0; }
+}
+
 @keyframes modal-in {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modal-out {
+  to { opacity: 0; transform: translateY(8px); }
+}
+
+.is-closing {
+  animation: backdrop-out 220ms ease forwards;
+}
+
+.is-closing .modal {
+  animation: modal-out 180ms ease forwards;
 }
 
 /* ── HEADER ROW ───────────────────────────────────────────────────────── */
@@ -344,14 +450,34 @@ onUnmounted(() => {
   border-color: var(--c-accent-border);
 }
 
-.modal__redacted {
-  color: var(--c-text-dim);
-  border: 0.5px solid var(--c-rule);
-  padding: 8px 14px;
-  letter-spacing: 0.2em;
+.modal__redacted-wrap {
+  position: relative;
+  display: inline-block;
   cursor: not-allowed;
   user-select: none;
 }
+
+/* Layer 1 (behind): real text — never touched by glitch JS */
+.modal__redacted-label {
+  position: absolute;
+  inset: 0;
+  padding: 8px 14px;
+  color: var(--c-text-dim);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Layer 2 (front): block chars — receives clip-path + filter */
+.modal__redacted-blocks {
+  display: block;
+  padding: 8px 14px;
+  color: var(--c-text-dim);
+  background: var(--c-surface);
+  position: relative;
+  z-index: 1;
+}
+
+
 
 /* ── EYEBROW UTILITY ──────────────────────────────────────────────────── */
 
