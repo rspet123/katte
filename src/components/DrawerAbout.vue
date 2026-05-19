@@ -82,5 +82,20 @@ const education: ExpandGroup[] = [
   width: 100%;
   height: auto;
 }
+
+@media (max-width: 768px) {
+  .drawer__detail {
+    position: absolute;
+    top: -28%;
+    left: 66%;
+    width: 90%;
+    margin-top: 0;
+    opacity: 0.6;
+  }
+
+  .drawer__detail-inner {
+    transform: scale(2.5) translate(-40%, 60%);
+  }
+}
 </style>
 

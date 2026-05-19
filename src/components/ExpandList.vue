@@ -286,4 +286,27 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+@media (max-width: 768px) {
+  .skill-row__header {
+    flex-wrap: wrap;
+  }
+
+  .skill-row__label {
+    flex: 1;
+    order: 1;
+  }
+
+  .skill-row__indicator {
+    order: 2;
+  }
+
+  .skill-row__meta {
+    order: 3;
+    flex-basis: 100%;
+    margin-left: 0;
+    padding-right: 0;
+    padding-bottom: 6px;
+  }
+}
 </style>

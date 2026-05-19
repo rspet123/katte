@@ -173,6 +173,21 @@ const experience: ExpandGroup[] = [
   height: auto;
 }
 
+@media (max-width: 768px) {
+  .drawer__detail {
+    position: absolute;
+    top: -55%;
+    left: 60%;
+    width: 100%;
+    margin-top: 0;
+    opacity: 0.6;
+  }
+
+  .drawer__detail-inner {
+    transform: scale(1.5) translate(-40%, 30%);
+  }
+}
+
 /* ── MODAL TRANSITION ─────────────────────────────────────────────────── */
 
 .modal-fade-enter-active,

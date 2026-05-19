@@ -188,3 +188,19 @@
   0%, 100% { color: rgba(0, 0, 0, 0.12); }
   50%       { color: rgba(0, 0, 0, 0.28); }
 }
+
+/* ── MOBILE ──────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .micrographic {
+    width: 16vw;
+  }
+
+  .section-tab {
+    top: 66.67%;
+  }
+
+  .section-tab--active {
+    top: calc(66.67% - 27.5vh);
+  }
+}

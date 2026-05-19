@@ -48,4 +48,19 @@ const groups: ExpandGroup[] = [
   width: 100%;
   height: auto;
 }
+
+@media (max-width: 768px) {
+  .drawer__detail {
+    position: absolute;
+    top: -20%;
+    left: 66%;
+    width: 50%;
+    margin-top: 0;
+    opacity: 0.6;
+  }
+
+  .drawer__detail-inner {
+    transform: scale(2) translate(-40%, 5%);
+  }
+}
 </style>

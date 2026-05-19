@@ -165,6 +165,12 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
     drop-shadow(var(--ca-c-x,  4px) 0 0 rgba(0, 220, 255, 0.9));
 }
 
+@media (max-width: 768px) {
+  .hero-logo {
+    transform: translate(-50%, -50%) scale(0.75);
+  }
+}
+
 /* ── HERO COPY ────────────────────────────────────────────────────────────── */
 
 .portfolio-label {
