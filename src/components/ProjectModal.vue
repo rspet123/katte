@@ -3,7 +3,8 @@ import { onMounted, onUnmounted } from 'vue'
 
 const glyphMap = import.meta.glob('../assets/svg/glyph/*.svg', {
   eager: true,
-  as: 'raw',
+  query: '?raw',
+  import: 'default',
 }) as Record<string, string>
 
 const getGlyph = (name: string): string | null => {
