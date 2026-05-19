@@ -129,18 +129,26 @@ const experience: ExpandGroup[] = [
 </script>
 
 <template>
-  <div class="drawer__title-row">
-    <div>
-      <p class="drawer__eyebrow">OUTPUT //</p>
-      <h3 class="drawer__title">experience.</h3>
+  <div class="drawer__sections">
+    <div class="drawer__section">
+      <div class="drawer__title-row">
+        <div>
+          <p class="drawer__eyebrow">OUTPUT //</p>
+          <h3 class="drawer__title">experience.</h3>
+        </div>
+        <span class="drawer__detail" aria-hidden="true">
+          <span class="drawer__detail-inner" v-html="detail2Raw" />
+        </span>
+      </div>
+      <ExpandList :groups="experience" @item-click="activeModal = $event" />
     </div>
-    <span class="drawer__detail" aria-hidden="true">
-      <span class="drawer__detail-inner" v-html="detail2Raw" />
-    </span>
+    <div class="drawer__section">
+      <div class="drawer__title-row">
+        <h3 class="drawer__title">projects.</h3>
+      </div>
+      <ExpandList :groups="projects" @item-click="activeModal = $event" />
+    </div>
   </div>
-  <ExpandList :groups="experience" @item-click="activeModal = $event" />
-  <h3 class="drawer__title">projects.</h3>
-  <ExpandList :groups="projects" @item-click="activeModal = $event" />
 
   <Transition name="modal-fade">
     <ProjectModal v-if="activeModal" :data="activeModal" @close="activeModal = null" />
@@ -148,6 +156,16 @@ const experience: ExpandGroup[] = [
 </template>
 
 <style scoped>
+.drawer__sections {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer__section {
+  flex: 0 0 40%;
+}
+
 .drawer__title-row {
   display: flex;
   justify-content: space-between;

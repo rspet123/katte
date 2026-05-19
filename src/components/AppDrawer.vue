@@ -135,6 +135,12 @@ const onTouchEnd = (e: TouchEvent) => {
   z-index: 1;
 }
 
+.drawer__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .drawer__header {
   display: flex;
   justify-content: flex-end;

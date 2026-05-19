@@ -261,7 +261,7 @@ onUnmounted(() => {
   right: 0;
   height: 200vh;
   background: url('@/assets/bgs/bg2.jpg') center center / cover;
-  opacity: 0.03;
+  opacity: 0.06;
   pointer-events: none;
   z-index: 5;
   will-change: transform;
