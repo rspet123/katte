@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
+import scaleRaw from '../assets/svg/micrographics/scale.svg?raw'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 const angArrow = computed(() => fixStrokes(angArrowRaw))
@@ -40,6 +41,7 @@ const emit = defineEmits<{ close: [] }>()
       <div class="drawer__body">
         <slot />
       </div>
+      <div class="drawer__scale" aria-hidden="true" v-html="scaleRaw" />
     </aside>
   </Transition>
 </template>
@@ -96,7 +98,7 @@ const emit = defineEmits<{ close: [] }>()
 .drawer__tex {
   position: absolute;
   inset: 0;
-  background: url('@/assets/svg/textures/bg_tex_2.png') repeat;
+  background: url('@/assets/textures/bg_tex_2.png') repeat;
   opacity: 0.015;
   pointer-events: none;
   z-index: 0;
@@ -241,6 +243,27 @@ const emit = defineEmits<{ close: [] }>()
 
 .drawer--light :deep(.drawer__detail-inner) {
   filter: brightness(0);
+}
+
+.drawer--light .drawer__scale {
+  filter: none;
+}
+
+/* ── DRAWER SCALE ──────────────────────────────────────────────────────── */
+
+.drawer__scale {
+  margin-top: auto;
+  width: 100%;
+  margin-bottom: calc(-60px + 3vh);
+  display: block;
+  filter: invert(1);
+  line-height: 0;
+}
+
+.drawer__scale :deep(svg) {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* ── TRANSITIONS ───────────────────────────────────────────────────────── */

@@ -5,7 +5,7 @@ import detail4Raw from '../assets/svg/micrographics/detail/detail_4.svg?raw'
 
 const groups: ExpandGroup[] = [
   { label: 'Languages', items: [
-    { label: 'Go',         meta: '[ 4 years ]' },
+    { label: 'Golang',         meta: '[ 4 years ]' },
     { label: 'Python',     meta: '[ 6 years ]' },
     { label: 'JavaScript // Vue.js', meta: '[ 4 years ]' },
     { label: 'MySQL // Postgres',        meta: '[ 5 years ]' },
@@ -13,16 +13,17 @@ const groups: ExpandGroup[] = [
   { label: 'Strategies', items: [
         { label: 'Agentic Development', meta: '[ 2 years ]' },
         { label: 'Prompt Engineering', meta: '[ 2 years ]' },
+        { label: 'Test-Driven Development', meta: '[ 5 years ]' },
   ]},
   { label: 'Tools',                   items: [
      { label: 'Docker',     meta: '[ 4 years ]' },
     { label: 'Git',        meta: '[ 6 years ]' },
-    { label: 'MySQL',      meta: '[ 5 years ]' },
-    { label: 'Postgres',      meta: '[ 5 years ]' },
+    { label: 'SQL',      meta: '[ 5 years ]' },
     { label: 'MongoDB',  meta: '[ 5 years ]' },  
-    { label: 'Redis',       meta: '[ 4 years ]' },
+    { label: 'Redis',       meta: '[ 3 years ]' },
     { label: 'OpenSearch',  meta: '[ 2 years ]' },    
     { label: 'Weaviate',  meta: '[ 2 years ]' },  
+    { label: 'SKLearn',  meta: '[ 5 years ]' },  
   ] },
   { label: 'Platforms',               items: [
     { label: 'Linux/WSL',       meta: '[ 5 years ]' },
@@ -32,6 +33,7 @@ const groups: ExpandGroup[] = [
     { label: 'LLMs',        meta: '[ Production   ]' },
     { label: 'Agents',      meta: '[ Production   ]' },
     { label: 'Multi-Agent Workflows', meta: '[ Production   ]' },
+    { label: 'MCP Servers',    meta: '[ Production   ]' },
     { label: 'RAG',         meta: '[ Production   ]' },
     { label: 'Embeddings',  meta: '[ Production   ]' }
   ] },

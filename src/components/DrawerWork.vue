@@ -23,7 +23,7 @@ const experience: ExpandGroup[] = [
 <template>
   <div class="drawer__title-row">
     <div>
-      <p class="drawer__eyebrow">Background //</p>
+      <p class="drawer__eyebrow">OUTPUT //</p>
       <h3 class="drawer__title">experience.</h3>
     </div>
     <span class="drawer__detail" aria-hidden="true">

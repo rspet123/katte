@@ -216,9 +216,12 @@ onUnmounted(() => {
 
 .tex-overlay {
   position: fixed;
-  inset: 0;
-  background: url('@/assets/svg/textures/bg_tex.png') repeat;
-  opacity: 0.009;
+  top: -50vh;
+  left: 0;
+  right: 0;
+  height: 200vh;
+  background: url('@/assets/bgs/bg2.jpg') center center / cover;
+  opacity: 0.03;
   pointer-events: none;
   z-index: 5;
   will-change: transform;
