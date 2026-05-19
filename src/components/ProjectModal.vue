@@ -3,8 +3,6 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { generateClipPath } from '@/utils/clip_path_gen'
 import { rand } from '@/utils/glitch'
 
-import neutronSvg from '../assets/svg/micrographics/neutron.svg?raw'
-
 const glyphMap = import.meta.glob('../assets/svg/glyph/*.svg', {
   eager: true,
   query: '?raw',
@@ -121,7 +119,6 @@ onUnmounted(() => {
     <div class="modal-backdrop" :class="{ 'is-closing': closing }" @click.self="close" role="dialog" aria-modal="true" :aria-label="data.title">
       <div class="modal">
         <div class="modal__tex" aria-hidden="true" />
-        <span class="modal__neutron" aria-hidden="true" v-html="neutronSvg" />
         <!-- ── HEADER ─────────────────────────────────────────── -->
         <header class="modal__header">
           <span class="modal__ref eyebrow" v-if="data.ref">[ REF - {{ data.ref }} ]</span>
@@ -171,6 +168,7 @@ onUnmounted(() => {
 
         <!-- ── FOOTER LINK ────────────────────────────────────── -->
         <footer v-if="data.github || data.isPrivate" class="modal__footer">
+        <span class="modal__section-label eyebrow"> LINK //</span>
           <span
             v-if="data.isPrivate"
             class="modal__redacted-wrap"
@@ -439,7 +437,6 @@ onUnmounted(() => {
   display: inline-block;
   color: var(--c-text-mid);
   text-decoration: none;
-  border: 0.5px solid var(--c-border);
   padding: 8px 14px;
   letter-spacing: 0.2em;
   transition: color 180ms ease, border-color 180ms ease;
