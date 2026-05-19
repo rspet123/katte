@@ -4,9 +4,9 @@ import type { ExpandGroup } from './ExpandList.vue'
 import detail3Raw from '../assets/svg/micrographics/detail/detail_3.svg?raw'
 
 const groups: ExpandGroup[] = [
-  { label: 'LinkedIn', items: ['linkedin.com/in/...'] },
-  { label: 'GitHub',   items: ['github.com/...'] },
-  { label: 'Resume',   items: ['Download PDF'] },
+  { label: 'LinkedIn', items: [{ label: '// LINKEDIN', href: 'https://www.linkedin.com/in/robert-spencer-aa0102207/' }] },
+  { label: 'GitHub',   items: [{ label: '// GITHUB',      href: 'https://github.com/rspet123' }] },
+  { label: 'Resume',   items: [{ label: '// PDF',               href: '/resume.pdf' }] },
 ]
 </script>
 

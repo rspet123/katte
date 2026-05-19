@@ -22,8 +22,8 @@ html {
 }
 
 body {
-  background: #0a0a0a;
-  color: #ffffff;
+  background: var(--c-bg);
+  color: var(--c-white);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 14px;
   line-height: 1.5;

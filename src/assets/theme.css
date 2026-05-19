@@ -1,0 +1,32 @@
+/* ── DESIGN SYSTEM THEME ─────────────────────────────────────────────────── */
+/* Single source of truth for all colors. Edit here, changes everywhere.     */
+
+:root {
+  /* ── CORE PALETTE ───────────────────────────────────────── */
+  --c-bg:        #0a0a0a;   /* default page background                      */
+  --c-surface:   #0d0d0d;   /* elevated surfaces: drawer, modal              */
+  --c-surface-2: #111111;   /* secondary dark surface, cards in dark context */
+  --c-off-white: #f0ede5;   /* light section backgrounds                     */
+  --c-white:     #ffffff;   /* display typography only                       */
+  --c-accent:    #b96f6f;   /* single neon pink accent — used sparingly      */
+  --c-muted:     #888780;   /* muted text, rules, secondary labels           */
+
+  /* ── DARK CONTEXT: WHITE ALPHAS ─────────────────────────── */
+  --c-ghost:       rgba(255, 255, 255, 0.08); /* borders in dark sections    */
+  --c-rule:        rgba(255, 255, 255, 0.12); /* horizontal rules            */
+  --c-border:      rgba(255, 255, 255, 0.15); /* slightly stronger border    */
+  --c-text-ghost:  rgba(255, 255, 255, 0.25); /* separators, very muted text */
+  --c-text-dim:    rgba(255, 255, 255, 0.35); /* section labels, eyebrows    */
+  --c-text-muted:  rgba(255, 255, 255, 0.40); /* metadata, secondary labels  */
+  --c-text-mid:    rgba(255, 255, 255, 0.50); /* icons, supporting text      */
+  --c-text-body:   rgba(255, 255, 255, 0.75); /* body copy                   */
+  --c-text-strong: rgba(255, 255, 255, 0.90); /* hover / near-full           */
+
+  /* ── ACCENT ALPHAS ──────────────────────────────────────── */
+  --c-accent-border: rgba(75, 42, 42, 0.4); /* accent-colored borders     */
+  --c-accent-fill:   rgba(150, 150, 150, 0.12); /* accent hover fill          */
+
+  /* ── OVERLAY & CHROME ───────────────────────────────────── */
+  --c-backdrop:  rgba(0, 0, 0, 0.72);          /* modal backdrop             */
+  --c-scrollbar: rgba(136, 135, 128, 0.35);    /* scrollbar thumb            */
+}

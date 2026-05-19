@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import type { ProjectModalData } from './ProjectModal.vue'
 
-export type ExpandItem = string | { label: string; meta: string }
+export type ExpandItem = string | { label: string; meta?: string; modal?: ProjectModalData; href?: string }
 
 export interface ExpandGroup {
   label: string
@@ -10,13 +11,22 @@ export interface ExpandGroup {
 }
 
 const normalize = (item: ExpandItem) =>
-  typeof item === 'string' ? { label: item, meta: '' } : item
+  typeof item === 'string' ? { label: item, meta: '', modal: undefined } : item
 
 const props = defineProps<{ groups: ExpandGroup[] }>()
+const emit = defineEmits<{ 'item-click': [modal: ProjectModalData] }>()
 
 const openIndex = ref<number | null>(null)
 const toggle = (i: number) => {
   openIndex.value = openIndex.value === i ? null : i
+}
+
+const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
+  const n = normalize(item)
+  if (n.modal) {
+    e.stopPropagation()
+    emit('item-click', n.modal)
+  }
 }
 </script>
 
@@ -39,9 +49,21 @@ const toggle = (i: number) => {
           <li
             v-for="item in group.items"
             :key="normalize(item).label"
+            :class="{ 'skill-sublist-item--clickable': normalize(item).modal || normalize(item).href }"
+            @click="handleItemClick(item, $event)"
           >
-            <span class="skill-item__label">{{ normalize(item).label }}</span>
-            <span v-if="normalize(item).meta" class="skill-item__meta">{{ normalize(item).meta }}</span>
+            <a
+              v-if="normalize(item).href"
+              :href="normalize(item).href"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="skill-item__link"
+              @click.stop
+            >{{ normalize(item).label }}</a>
+            <span v-else class="skill-item__label">{{ normalize(item).label }}</span>
+            <span v-if="normalize(item).modal" class="skill-item__meta skill-item__meta--trigger"
+            >[<span class="trigger__plus"> + </span><span class="trigger__more"> // MORE</span>]</span>
+            <span v-else-if="normalize(item).meta" class="skill-item__meta">{{ normalize(item).meta }}</span>
           </li>
         </ul>
       </div>
@@ -197,5 +219,71 @@ const toggle = (i: number) => {
   letter-spacing: 0.1em;
   opacity: 0.6;
   white-space: nowrap;
+}
+
+/* ── CLICKABLE ITEMS ──────────────────────────────────────────────────── */
+
+.skill-sublist-item--clickable {
+  cursor: pointer;
+}
+
+.skill-sublist-item--clickable:hover {
+  opacity: 1;
+}
+
+.skill-item__meta--trigger {
+  color: var(--c-accent);
+  opacity: 0.5;
+  transition: opacity 180ms ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.trigger__plus,
+.trigger__more {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 1s cubic-bezier(0.075, 0.82, 0.165, 1),
+              opacity    200ms ease;
+}
+
+.trigger__plus {
+  max-width: 2em;
+  opacity: 1;
+}
+
+.trigger__more {
+  max-width: 0;
+  opacity: 0;
+}
+
+.skill-sublist-item--clickable:hover .skill-item__meta--trigger {
+  opacity: 1;
+}
+
+.skill-sublist-item--clickable:hover .trigger__plus {
+  max-width: 0;
+  opacity: 0;
+}
+
+.skill-sublist-item--clickable:hover .trigger__more {
+  max-width: 5em;
+  opacity: 1;
+}
+
+/* ── LINK ITEMS ───────────────────────────────────────────────────────── */
+
+.skill-item__link {
+  color: inherit;
+  text-decoration: none;
+  letter-spacing: inherit;
+  transition: opacity 180ms ease;
+}
+
+.skill-item__link:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 </style>

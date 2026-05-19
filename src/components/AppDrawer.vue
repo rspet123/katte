@@ -66,7 +66,7 @@ const emit = defineEmits<{ close: [] }>()
   right: 0;
   bottom: 0;
   width: var(--drawer-w);
-  background: #0d0d0d;
+  background: var(--c-surface);
   z-index: 200;
   display: flex;
   flex-direction: column;
@@ -74,7 +74,7 @@ const emit = defineEmits<{ close: [] }>()
   overflow-y: auto;
   /* Firefox */
   scrollbar-width: thin;
-  scrollbar-color: rgba(136, 135, 128, 0.35) transparent;
+  scrollbar-color: var(--c-scrollbar) transparent;
 }
 
 .drawer::-webkit-scrollbar {
@@ -86,13 +86,13 @@ const emit = defineEmits<{ close: [] }>()
 }
 
 .drawer::-webkit-scrollbar-thumb {
-  background: rgba(136, 135, 128, 0.35);
+  background: var(--c-scrollbar);
   border-radius: 0;
   transition: background 250ms ease;
 }
 
 .drawer::-webkit-scrollbar-thumb:hover {
-  background: #ff2d78;
+  background: var(--c-accent);
 }
 
 .drawer__tex {
@@ -132,13 +132,13 @@ const emit = defineEmits<{ close: [] }>()
   display: flex;
   width: 14px;
   height: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--c-text-mid);
   transform: rotate(180deg);
   transition: color 200ms ease;
 }
 
 .drawer__close:hover .drawer__close-icon {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--c-text-strong);
 }
 
 .drawer__close-icon :deep(svg) {
@@ -153,7 +153,7 @@ const emit = defineEmits<{ close: [] }>()
   font-weight: 400;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--c-text-dim);
   margin: 0 0 16px;
 }
 
@@ -161,7 +161,7 @@ const emit = defineEmits<{ close: [] }>()
   font-size: clamp(28px, 4vw, 48px);
   font-weight: 300;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: var(--c-white);
   margin: 0 0 32px;
   line-height: 1.05;
 }
@@ -170,7 +170,7 @@ const emit = defineEmits<{ close: [] }>()
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 0.03em;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--c-text-mid);
   line-height: 1.75;
   margin: 0;
 }
@@ -188,7 +188,7 @@ const emit = defineEmits<{ close: [] }>()
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.45);
   padding: 14px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--c-ghost);
   cursor: default;
   transition: color 200ms ease;
 }
@@ -198,7 +198,7 @@ const emit = defineEmits<{ close: [] }>()
 }
 
 :deep(.drawer__list li:hover) {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--c-text-strong);
 }
 
 /* ── DRAWER LIGHT THEME ────────────────────────────────────────────────── */
