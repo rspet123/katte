@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, nextTick, ref, onMounted, onUnmounted, watch } from 'vue'
 
 import burstlineRaw  from '../assets/svg/micrographics/long_burstline.svg?raw'
 import reticle1Raw   from '../assets/svg/micrographics/target_circle.svg?raw'
@@ -82,16 +82,88 @@ let panelObserver: IntersectionObserver | null = null
 let panelElements: HTMLElement[] = []
 
 // ── Drawer state ──────────────────────────────────────────────────────────
-const activeDrawer = ref<string | null>(null)
-const toggleDrawer = (section: string) => {
-  activeDrawer.value = activeDrawer.value === section ? null : section
-}
-const handleKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') activeDrawer.value = null
+type DrawerName = 'work' | 'about' | 'contact'
+
+interface DrawerSection {
+  name: DrawerName
+  number: string
+  isLight: boolean
 }
 
-// Maps panel index → drawer name (null = no drawer for this panel)
-const PANEL_DRAWER_NAMES: (string | null)[] = [null, 'work', 'about', 'contact']
+const PANEL_DRAWERS: (DrawerSection | null)[] = [
+  null,
+  { name: 'work', number: '01', isLight: false },
+  { name: 'about', number: '02', isLight: true },
+  { name: 'contact', number: '03', isLight: false },
+]
+
+const activeDrawer = ref<DrawerName | null>(null)
+const renderedDrawer = ref<DrawerName | null>(null)
+const workDrawerRef = ref<InstanceType<typeof DrawerWork> | null>(null)
+const drawerTrackOffset = ref(0)
+let drawerCloseTimer: ReturnType<typeof setTimeout> | null = null
+const getDrawerTransitionDuration = () => (
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 400
+)
+
+const currentDrawer = computed(() => PANEL_DRAWERS[activePanel.value] ?? null)
+const renderedDrawerMeta = computed(() => {
+  const name = activeDrawer.value ?? renderedDrawer.value
+  if (name) return PANEL_DRAWERS.find((entry) => entry?.name === name) ?? null
+  return currentDrawer.value
+})
+
+const openDrawer = (name?: DrawerName) => {
+  const section = name
+    ? PANEL_DRAWERS.find((entry) => entry?.name === name) ?? null
+    : currentDrawer.value
+  if (!section) return
+  if (drawerCloseTimer) clearTimeout(drawerCloseTimer)
+  renderedDrawer.value = section.name
+  activeDrawer.value = section.name
+}
+
+const toggleDrawer = (name: DrawerName) => {
+  if (activeDrawer.value === name) closeDrawer()
+  else openDrawer(name)
+}
+
+const closeDrawer = (restoreFocus = true) => {
+  if (!activeDrawer.value) return
+  const closingDrawer = activeDrawer.value
+  if (activeDrawer.value === 'work') workDrawerRef.value?.resetDetail()
+  activeDrawer.value = null
+  if (restoreFocus) {
+    nextTick(() => {
+      scrollRootRef.value
+        ?.querySelector<HTMLButtonElement>(`[data-info-rail="${closingDrawer}"]`)
+        ?.focus()
+    })
+  }
+  if (drawerCloseTimer) clearTimeout(drawerCloseTimer)
+  drawerCloseTimer = setTimeout(() => {
+    renderedDrawer.value = null
+  }, getDrawerTransitionDuration())
+}
+
+const stepBack = () => {
+  if (activeDrawer.value === 'work' && workDrawerRef.value?.hasActiveDetail()) {
+    workDrawerRef.value.backToList()
+    return
+  }
+  closeDrawer()
+}
+
+const handleDrawerBoundaryScroll = (delta: number) => {
+  // The drawer has reached the top or bottom of its own content. Continue in
+  // the page's snap scroller so the rail and drawer section advance together.
+  if (activeDrawer.value === 'work' && workDrawerRef.value?.hasActiveDetail()) return
+  scrollRootRef.value?.scrollBy({ top: delta, behavior: 'smooth' })
+}
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && activeDrawer.value) stepBack()
+}
 
 // ── Swipe-to-open gesture ──────────────────────────────────────────────────
 const SWIPE_EDGE_PX   = 40  // touch must start within this many px of the right edge
@@ -120,20 +192,40 @@ const onTouchEnd = (e: TouchEvent) => {
   const dx = touchStartX - touch.clientX  // positive = moved left
   const dy = Math.abs(touch.clientY - touchStartY)
 
-  if (dx >= SWIPE_MIN_PX && dy <= SWIPE_MAX_VERT && activeDrawer.value === null) {
-    const drawerName = PANEL_DRAWER_NAMES[activePanel.value] ?? null
-    if (drawerName) activeDrawer.value = drawerName
-  }
+  if (dx >= SWIPE_MIN_PX && dy <= SWIPE_MAX_VERT && activeDrawer.value === null) openDrawer()
 }
-
-// 'about' is panel--dark, so its drawer should be light; others are light panels → dark drawer
-const LIGHT_DRAWER_PANELS = new Set(['about'])
-const drawerIsLight = computed(() => LIGHT_DRAWER_PANELS.has(activeDrawer.value ?? ''))
 
 const onScroll = () => {
   const y = scrollRootRef.value?.scrollTop ?? 0
   if (texRef.value) texRef.value.style.transform = `translateY(${y * 0.12}px)`
+
+  // The first viewport is the hero, which has no drawer. From Work onward,
+  // move the drawer's three-section track by exactly the same number of
+  // pixels as the page sequence.
+  const viewportHeight = scrollRootRef.value?.clientHeight ?? window.innerHeight
+  drawerTrackOffset.value = Math.min(
+    Math.max(y - viewportHeight, 0),
+    viewportHeight * (PANEL_DRAWERS.length - 2),
+  )
 }
+
+watch(activePanel, (panelIndex) => {
+  if (!activeDrawer.value) return
+
+  const nextSection = PANEL_DRAWERS[panelIndex]
+  if (!nextSection) {
+    closeDrawer(false)
+    return
+  }
+
+  if (activeDrawer.value === nextSection.name) return
+  if (activeDrawer.value === 'work') workDrawerRef.value?.resetDetail()
+
+  // The split stays fixed on desktop, while its content follows the same
+  // snap sequence as the visible rail and page.
+  renderedDrawer.value = nextSection.name
+  activeDrawer.value = nextSection.name
+})
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
@@ -142,6 +234,7 @@ onMounted(() => {
 
   // ── Texture parallax ───────────────────────────────────────────────────
   scrollRootRef.value?.addEventListener('scroll', onScroll, { passive: true })
+  onScroll()
 
   panelObserver = new IntersectionObserver(
     (entries) => {
@@ -173,6 +266,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  if (drawerCloseTimer) clearTimeout(drawerCloseTimer)
   window.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('touchstart', onTouchStart)
   window.removeEventListener('touchend', onTouchEnd)
@@ -195,22 +289,44 @@ onUnmounted(() => {
   <!-- ── SIDE DRAWER ──────────────────────────────────────────────────── -->
   <AppDrawer
     :is-open="activeDrawer !== null"
-    :is-light="drawerIsLight"
-    :label="activeDrawer ? `${activeDrawer} details` : undefined"
-    @close="activeDrawer = null"
+    :label="renderedDrawerMeta ? `${renderedDrawerMeta.name} information` : undefined"
+    @close="closeDrawer"
+    @swipe-right="stepBack"
+    @boundary-scroll="handleDrawerBoundaryScroll"
   >
-    <DrawerWork    v-if="activeDrawer === 'work'" />
-    <DrawerAbout   v-else-if="activeDrawer === 'about'" />
-    <DrawerContact v-else-if="activeDrawer === 'contact'" />
+    <div
+      class="drawer-sequence"
+      :style="{ transform: `translate3d(0, -${drawerTrackOffset}px, 0)` }"
+    >
+      <section
+        class="drawer-sequence__section drawer-sequence__section--dark"
+        :aria-hidden="activeDrawer !== 'work'"
+      >
+        <DrawerWork ref="workDrawerRef" />
+      </section>
+      <section
+        class="drawer-sequence__section drawer-sequence__section--light"
+        :aria-hidden="activeDrawer !== 'about'"
+      >
+        <DrawerAbout />
+      </section>
+      <section
+        class="drawer-sequence__section drawer-sequence__section--dark"
+        :aria-hidden="activeDrawer !== 'contact'"
+      >
+        <DrawerContact />
+      </section>
+    </div>
   </AppDrawer>
 
   <!-- ── SCROLL ROOT ────────────────────────────────────────────────────── -->
-  <div class="scroll-root scrollbar-thin" ref="scrollRootRef" :class="{ 'scroll-root--pushed': activeDrawer !== null }">
+  <div
+    class="scroll-root scrollbar-thin"
+    ref="scrollRootRef"
+    :class="{ 'scroll-root--pushed': activeDrawer !== null }"
+  >
 
-    <PanelHero
-      ref="heroPanelRef"
-      :isActive="false"
-    />
+    <PanelHero ref="heroPanelRef" :isActive="false" />
 
     <div class="bridge" aria-hidden="true">
       <div class="bridge-mark" v-html="burstline" />
@@ -218,7 +334,7 @@ onUnmounted(() => {
 
     <PanelWork
       ref="workPanelRef"
-      :isActive="activeDrawer === 'work'"
+      :is-active="activeDrawer === 'work'"
       @toggle="toggleDrawer('work')"
     />
 
@@ -228,7 +344,7 @@ onUnmounted(() => {
 
     <PanelAbout
       ref="aboutPanelRef"
-      :isActive="activeDrawer === 'about'"
+      :is-active="activeDrawer === 'about'"
       @toggle="toggleDrawer('about')"
     />
 
@@ -238,7 +354,7 @@ onUnmounted(() => {
 
     <PanelContact
       ref="contactPanelRef"
-      :isActive="activeDrawer === 'contact'"
+      :is-active="activeDrawer === 'contact'"
       @toggle="toggleDrawer('contact')"
     />
 
@@ -314,13 +430,67 @@ onUnmounted(() => {
 }
 
 .scroll-root--pushed {
-  transform: translateX(calc(-1 * var(--drawer-w)));
+  transform: translateX(calc(var(--drawer-rail-w) - var(--drawer-w)));
 }
 
 /* ── SCROLLBAR ─────────────────────────────────────────────────────────── */
 
 .scroll-root--pushed::-webkit-scrollbar { width: 0; }
 .scroll-root--pushed { scrollbar-width: none; }
+
+/* ── DRAWER SCROLL SEQUENCE ───────────────────────────────────────────── */
+
+.drawer-sequence {
+  width: 100%;
+  height: 300%;
+  will-change: transform;
+}
+
+.drawer-sequence__section {
+  position: relative;
+  width: 100%;
+  height: calc(100% / 3);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.drawer-sequence__section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: url('@/assets/textures/bg_tex_2.png') repeat;
+  opacity: 0.015;
+  pointer-events: none;
+}
+
+.drawer-sequence__section--dark {
+  --drawer-list-text: var(--c-text-mid);
+  --drawer-list-hover: var(--c-text-strong);
+  --drawer-list-rule: var(--c-ghost);
+  color: var(--c-white);
+  background: var(--c-surface);
+}
+
+.drawer-sequence__section--light {
+  --drawer-list-text: var(--c-light-text-body);
+  --drawer-list-hover: var(--c-light-text-strong);
+  --drawer-list-rule: var(--c-light-rule);
+  color: var(--c-surface-2);
+  background: var(--c-light-surface);
+}
+
+.drawer-sequence__section--light :deep(.drawer__eyebrow) {
+  color: var(--c-light-text-muted);
+}
+
+.drawer-sequence__section--light :deep(.drawer__title) {
+  color: var(--c-surface-2);
+}
+
+.drawer-sequence__section--light :deep(.drawer__detail-inner) {
+  filter: brightness(0);
+}
 
 /* ── BRIDGE ────────────────────────────────────────────────────────────── */
 /* Zero height — not a snap point. overflow:visible lets the mark extend   */
@@ -346,5 +516,13 @@ onUnmounted(() => {
 .bridge-mark :deep(svg) { width: 100%; height: 100%; fill: #ffffff; }
 
 .bridge-mark--flipped { right: 50%; transform: translate(-50%, -50%) scaleX(-1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-root,
+  .reticle,
+  .reticle--visible {
+    transition-duration: 1ms;
+  }
+}
 
 </style>

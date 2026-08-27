@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
 import resistorRaw from '../assets/svg/micrographics/resistor.svg?raw'
+import InfoRail from './InfoRail.vue'
 import vTypewriter from '../directives/v-typewriter.js'
 import { useTextGlitch } from '../utils/useTextGlitch'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
-const angArrow = computed(() => fixStrokes(angArrowRaw))
 const resistor = computed(() => fixStrokes(resistorRaw).replace('<svg ', '<svg fill="currentColor" '))
 
 defineProps<{ isActive: boolean }>()
@@ -25,7 +24,7 @@ const { text: findMeText } = useTextGlitch({
 </script>
 
 <template>
-  <section class="panel panel--light" id="contact" ref="panelRef">
+  <section class="panel panel--light panel--with-rail" id="contact" ref="panelRef">
     <p class="eyebrow corner-label" v-typewriter="{text: '[ 33° 39′ 26″ N // 117° 44′ 47″ W ]', seconds: 2.5}"></p>
 
     <div class="panel-inner">
@@ -34,13 +33,12 @@ const { text: findMeText } = useTextGlitch({
       <h2 class="section-title">c<em>o</em>ntact.</h2>
     </div>
 
-    <button
-      class="section-tab section-tab--light"
-      :class="{ 'section-tab--active': isActive }"
-      @click="emit('toggle')"
-      aria-label="More info"
-    >
-      <span class="section-tab__icon" v-html="angArrow" />
-    </button>
+    <InfoRail
+      number="03"
+      section-name="contact"
+      :is-open="isActive"
+      @toggle="emit('toggle')"
+    />
+
   </section>
 </template>

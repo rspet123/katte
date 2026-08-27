@@ -7,6 +7,8 @@ import HeroSection from './components/HeroSection.vue'
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;800&display=swap');
+
 /* ── GLOBAL RESET & BASE ─────────────────────────────── */
 
 *,
@@ -24,7 +26,7 @@ html {
 body {
   background: var(--c-bg);
   color: var(--c-white);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -34,6 +36,4 @@ body {
   overflow: hidden;
 }
 
-/* Inter via Google Fonts — weight 300 and 800 only */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&display=swap');
 </style>

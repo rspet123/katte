@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
 import resistorRaw from '../assets/svg/micrographics/resistor.svg?raw'
+import InfoRail from './InfoRail.vue'
 import vTypewriter from '../directives/v-typewriter.js'
 import { useTextGlitch } from '../utils/useTextGlitch'
 
@@ -30,7 +31,7 @@ const { text: workText } = useTextGlitch({
 </script>
 
 <template>
-  <section class="panel panel--light" id="work" ref="panelRef">
+  <section class="panel panel--light panel--with-rail" id="work" ref="panelRef">
     <p class="eyebrow corner-label" v-typewriter="{text: '[ KATTE // LABS ]', seconds: 2.5}"></p>
 
     <div class="panel-inner">
@@ -46,13 +47,12 @@ const { text: workText } = useTextGlitch({
       <span class="scroll-cue__arrow" v-html="angArrow" />
     </a>
 
-    <button
-      class="section-tab section-tab--light"
-      :class="{ 'section-tab--active': isActive }"
-      @click="emit('toggle')"
-      aria-label="More info"
-    >
-      <span class="section-tab__icon" v-html="angArrow" />
-    </button>
+    <InfoRail
+      number="01"
+      section-name="work"
+      :is-open="isActive"
+      @toggle="emit('toggle')"
+    />
+
   </section>
 </template>

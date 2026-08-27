@@ -2,6 +2,8 @@
 /* Single source of truth for all colors. Edit here, changes everywhere.     */
 
 :root {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
   /* ── CORE PALETTE ───────────────────────────────────────── */
   --c-bg:        #0a0a0a;   /* default page background                      */
   --c-surface:   #0d0d0d;   /* elevated surfaces: drawer, modal              */
@@ -14,7 +16,6 @@
   /* ── DARK CONTEXT: WHITE ALPHAS ─────────────────────────── */
   --c-ghost:       rgba(255, 255, 255, 0.08); /* borders in dark sections    */
   --c-rule:        rgba(255, 255, 255, 0.12); /* horizontal rules            */
-  --c-border:      rgba(255, 255, 255, 0.15); /* slightly stronger border    */
   --c-text-ghost:  rgba(255, 255, 255, 0.25); /* separators, very muted text */
   --c-text-dim:    rgba(255, 255, 255, 0.35); /* section labels, eyebrows    */
   --c-text-muted:  rgba(255, 255, 255, 0.40); /* metadata, secondary labels  */

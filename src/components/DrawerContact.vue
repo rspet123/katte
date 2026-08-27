@@ -21,16 +21,18 @@ const groups: ExpandGroup[] = [
 </script>
 
 <template>
-  <div class="drawer__title-row">
-    <div>
-      <p class="drawer__eyebrow">me //</p>
-      <h3 class="drawer__title">connect.</h3>
+  <div class="drawer-panel scrollbar-thin">
+    <div class="drawer__title-row">
+      <div>
+        <p class="drawer__eyebrow">me //</p>
+        <h3 class="drawer__title">connect.</h3>
+      </div>
+      <span class="drawer__detail" aria-hidden="true">
+        <span class="drawer__detail-inner" v-html="detail3Raw" />
+      </span>
     </div>
-    <span class="drawer__detail" aria-hidden="true">
-      <span class="drawer__detail-inner" v-html="detail3Raw" />
-    </span>
+    <ExpandList :groups="groups" />
   </div>
-  <ExpandList :groups="groups" />
 </template>
 
 <style scoped>

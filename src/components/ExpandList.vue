@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { ProjectModalData } from './ProjectModal.vue'
+import type { ProjectDetailData } from '../types/projects'
 
-export type ExpandItem = string | { label: string; meta?: string; modal?: ProjectModalData; href?: string }
+export type ExpandItem = string | {
+  label: string
+  meta?: string
+  detail?: ProjectDetailData
+  href?: string
+}
 
 export interface ExpandGroup {
   label: string
@@ -11,59 +16,76 @@ export interface ExpandGroup {
 }
 
 const normalize = (item: ExpandItem) =>
-  typeof item === 'string' ? { label: item, meta: '', modal: undefined } : item
+  typeof item === 'string'
+    ? { label: item, meta: '', detail: undefined, href: undefined }
+    : item
 
 const props = defineProps<{ groups: ExpandGroup[] }>()
-const emit = defineEmits<{ 'item-click': [modal: ProjectModalData] }>()
+const emit = defineEmits<{
+  'detail-select': [detail: ProjectDetailData, trigger: HTMLElement]
+}>()
 
 const openIndex = ref<number | null>(null)
-const toggle = (i: number) => {
-  openIndex.value = openIndex.value === i ? null : i
+const toggle = (index: number) => {
+  openIndex.value = openIndex.value === index ? null : index
 }
 
-const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
-  const n = normalize(item)
-  if (n.modal) {
-    e.stopPropagation()
-    emit('item-click', n.modal)
-  }
+const selectDetail = (item: ExpandItem, event: MouseEvent) => {
+  const normalized = normalize(item)
+  if (!normalized.detail) return
+  emit('detail-select', normalized.detail, event.currentTarget as HTMLElement)
 }
 </script>
 
 <template>
   <ul class="drawer__list">
     <li
-      v-for="(group, i) in props.groups"
+      v-for="(group, index) in props.groups"
       :key="group.label"
       class="skill-row"
-      :class="{ 'skill-row--open': openIndex === i }"
-      @click="toggle(i)"
+      :class="{ 'skill-row--open': openIndex === index }"
     >
-      <div class="skill-row__header">
+      <button
+        class="skill-row__header"
+        type="button"
+        :aria-expanded="openIndex === index"
+        @click="toggle(index)"
+      >
         <span class="skill-row__label">{{ group.label }}</span>
         <span v-if="group.meta" class="skill-row__meta">{{ group.meta }}</span>
         <span class="skill-row__indicator" aria-hidden="true" />
-      </div>
+      </button>
+
       <div class="skill-row__expand">
         <ul class="skill-row__inner skill-sublist">
-          <li
-            v-for="item in group.items"
-            :key="normalize(item).label"
-            :class="{ 'skill-sublist-item--clickable': normalize(item).modal || normalize(item).href }"
-            @click="handleItemClick(item, $event)"
-          >
+          <li v-for="item in group.items" :key="normalize(item).label">
             <a
               v-if="normalize(item).href"
               :href="normalize(item).href"
               target="_blank"
               rel="noopener noreferrer"
-              class="skill-item__link"
-              @click.stop
-            >{{ normalize(item).label }}</a>
-            <span v-else class="skill-item__label">{{ normalize(item).label }}</span>
-            <span v-if="normalize(item).modal" class="skill-item__meta skill-item__meta--trigger"
-            >[<span class="trigger__plus"> + </span><span class="trigger__more"> // MORE</span>]</span>
-            <span v-else-if="normalize(item).meta" class="skill-item__meta">{{ normalize(item).meta }}</span>
+              class="skill-item skill-item--interactive"
+            >
+              <span class="skill-item__label">{{ normalize(item).label }}</span>
+              <span class="skill-item__meta" aria-hidden="true">[ ↗ ]</span>
+            </a>
+
+            <button
+              v-else-if="normalize(item).detail"
+              class="skill-item skill-item--interactive"
+              type="button"
+              @click="selectDetail(item, $event)"
+            >
+              <span class="skill-item__label">{{ normalize(item).label }}</span>
+              <span class="skill-item__meta skill-item__meta--trigger" aria-hidden="true">
+                [<span class="trigger__plus"> + </span><span class="trigger__more"> // VIEW</span>]
+              </span>
+            </button>
+
+            <span v-else class="skill-item">
+              <span class="skill-item__label">{{ normalize(item).label }}</span>
+              <span v-if="normalize(item).meta" class="skill-item__meta">{{ normalize(item).meta }}</span>
+            </span>
           </li>
         </ul>
       </div>
@@ -72,23 +94,47 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
 </template>
 
 <style scoped>
-/* ── ROW ──────────────────────────────────────────────────────────────── */
-
 .skill-row {
-  padding: 0;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
+  padding: 0;
+  border-bottom: 1px solid var(--drawer-list-rule, var(--c-ghost));
+}
+
+.skill-row:last-child {
+  border-bottom: 0;
 }
 
 .skill-row__header {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 14px 0;
+  color: var(--drawer-list-text, var(--c-text-mid));
+  background: none;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-align: left;
+  text-transform: uppercase;
+  transition: color 200ms ease;
 }
 
-/* ── +/− INDICATOR ────────────────────────────────────────────────────── */
+.skill-row__header:hover,
+.skill-row__header:focus-visible {
+  color: var(--drawer-list-hover, var(--c-text-strong));
+}
+
+.skill-row__header:focus-visible,
+.skill-item--interactive:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
+}
 
 .skill-row__indicator {
   position: relative;
@@ -96,7 +142,7 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   height: 12px;
   flex-shrink: 0;
   opacity: 0.35;
-  transition: all 200ms ease;
+  transition: opacity 200ms ease;
 }
 
 .skill-row__indicator::before,
@@ -104,11 +150,9 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   content: '';
   position: absolute;
   background: currentColor;
-  border-radius: 1px;
   transition: transform 280ms ease, opacity 280ms ease;
 }
 
-/* horizontal bar */
 .skill-row__indicator::before {
   width: 100%;
   height: 1px;
@@ -117,7 +161,6 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   transform: translateY(-50%);
 }
 
-/* vertical bar */
 .skill-row__indicator::after {
   width: 1px;
   height: 100%;
@@ -130,13 +173,10 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   opacity: 0.7;
 }
 
-/* collapse vertical bar to form − */
 .skill-row--open .skill-row__indicator::after {
-  transform: translateX(-50%) scaleY(0) rotate(180deg);
+  transform: translateX(-50%) scaleY(0);
   opacity: 0;
 }
-
-/* ── EXPAND (CSS grid trick) ──────────────────────────────────────────── */
 
 .skill-row__expand {
   display: grid;
@@ -152,48 +192,62 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   overflow: hidden;
 }
 
-/* ── SUB-LIST ─────────────────────────────────────────────────────────── */
-
 .skill-sublist {
-  list-style: none;
   margin: 0;
-  padding: 0 0 6px 0;
+  padding: 0 0 6px;
+  list-style: none;
 }
 
 .skill-sublist li {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 12px;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: currentColor;
-  opacity: 0.9;
-  padding: 7px 0 7px 14px;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.12);
   position: relative;
-  transition: opacity 200ms ease;
-  cursor: default;
+  padding-left: 14px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.12);
 }
 
 .skill-sublist li::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 50%;
-  width: 4px;
+  top: 45%;
+  width: 1%;
   height: 1px;
   background: currentColor;
   opacity: 0.5;
 }
 
 .skill-sublist li:last-child {
-  border-bottom: none;
+  border-bottom: 0;
 }
 
-.skill-row:hover .skill-sublist li {
+.skill-item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 0;
+  color: currentColor;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.14em;
+  text-align: left;
+  text-decoration: none;
+  text-transform: uppercase;
+  opacity: 0.9;
+  transition: opacity 180ms ease;
+}
+
+.skill-item--interactive {
+  cursor: pointer;
+}
+
+.skill-item--interactive:hover,
+.skill-item--interactive:focus-visible {
   opacity: 1;
 }
 
@@ -201,12 +255,16 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   white-space: pre;
 }
 
-.skill-row__meta {
+.skill-row__meta,
+.skill-item__meta {
+  margin-left: auto;
   font-size: 9px;
   letter-spacing: 0.1em;
-  opacity: 0.6;
   white-space: nowrap;
-  margin-left: auto;
+  opacity: 0.6;
+}
+
+.skill-row__meta {
   padding-right: 12px;
 }
 
@@ -214,29 +272,12 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   min-width: 0;
 }
 
-.skill-item__meta {
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  opacity: 0.6;
-  white-space: nowrap;
-}
-
-/* ── CLICKABLE ITEMS ──────────────────────────────────────────────────── */
-
-.skill-sublist-item--clickable {
-  cursor: pointer;
-}
-
-.skill-sublist-item--clickable:hover {
-  opacity: 1;
-}
-
 .skill-item__meta--trigger {
-  color: var(--c-accent);
-  opacity: 0.5;
-  transition: opacity 180ms ease;
   display: inline-flex;
   align-items: center;
+  color: var(--c-accent);
+  opacity: 0.6;
+  transition: opacity 180ms ease;
 }
 
 .trigger__plus,
@@ -244,8 +285,7 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
-  transition: max-width 1s cubic-bezier(0.075, 0.82, 0.165, 1),
-              opacity    200ms ease;
+  transition: max-width 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 180ms ease;
 }
 
 .trigger__plus {
@@ -258,33 +298,21 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
   opacity: 0;
 }
 
-.skill-sublist-item--clickable:hover .skill-item__meta--trigger {
+.skill-item--interactive:hover .skill-item__meta--trigger,
+.skill-item--interactive:focus-visible .skill-item__meta--trigger {
   opacity: 1;
 }
 
-.skill-sublist-item--clickable:hover .trigger__plus {
+.skill-item--interactive:hover .trigger__plus,
+.skill-item--interactive:focus-visible .trigger__plus {
   max-width: 0;
   opacity: 0;
 }
 
-.skill-sublist-item--clickable:hover .trigger__more {
+.skill-item--interactive:hover .trigger__more,
+.skill-item--interactive:focus-visible .trigger__more {
   max-width: 5em;
   opacity: 1;
-}
-
-/* ── LINK ITEMS ───────────────────────────────────────────────────────── */
-
-.skill-item__link {
-  color: inherit;
-  text-decoration: none;
-  letter-spacing: inherit;
-  transition: opacity 180ms ease;
-}
-
-.skill-item__link:hover {
-  opacity: 0.7;
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 @media (max-width: 768px) {
@@ -307,6 +335,16 @@ const handleItemClick = (item: ExpandItem, e: MouseEvent) => {
     margin-left: 0;
     padding-right: 0;
     padding-bottom: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-row__indicator::before,
+  .skill-row__indicator::after,
+  .skill-row__expand,
+  .trigger__plus,
+  .trigger__more {
+    transition-duration: 1ms;
   }
 }
 </style>

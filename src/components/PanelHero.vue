@@ -78,7 +78,7 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
   <section class="panel panel--dark" id="hero" ref="panelRef">
     <div class="topo-texture" aria-hidden="true" />
 
-    <p class="eyebrow corner-label" v-typewriter="{text: '[ VER. // 0.0.1-beta ]', seconds: 2.5}"></p>
+    <p class="eyebrow corner-label" v-typewriter="{text: '[ VER. // 0.1.0 ]', seconds: 2.5}"></p>
 
     <div class="hero-logo" ref="heroLogoRef" v-html="logoSvg" aria-hidden="true" />
 
