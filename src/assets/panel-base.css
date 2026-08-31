@@ -88,6 +88,10 @@
   line-height: 1.05;
 }
 
+.section-title em {
+  margin-left: -0.1em;
+}
+
 .micrographic {
   display: block;
   width: 8vw;

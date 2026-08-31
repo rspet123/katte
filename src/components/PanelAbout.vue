@@ -27,7 +27,7 @@ const { text: whoText } = useTextGlitch({
 
 <template>
   <section class="panel panel--dark panel--with-rail" id="about" ref="panelRef">
-    <p class="eyebrow corner-label" v-typewriter="{text: '[ EST // MCMXCIX ]', seconds: 2.5}"></p>
+    <p class="eyebrow corner-label" v-typewriter="{text: '[ EST » MCMXCIX ]', seconds: 2.5}"></p>
 
     <div class="panel-inner">
       <p class="eyebrow" ref="eyebrowRef">02 / 03 · {{ whoText }}</p>
