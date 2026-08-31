@@ -52,7 +52,7 @@ const education: ExpandGroup[] = [
   <div class="drawer-panel scrollbar-thin">
     <div class="drawer__title-row">
       <div>
-        <p class="drawer__eyebrow">capabilities //</p>
+        <p class="drawer__eyebrow">capabilities ¬</p>
         <h3 class="drawer__title">backend & ai</h3>
         <h3 class="drawer__title">systems engineer.</h3>
       </div>

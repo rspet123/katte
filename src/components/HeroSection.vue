@@ -100,6 +100,7 @@ const PANEL_DRAWERS: (DrawerSection | null)[] = [
 const activeDrawer = ref<DrawerName | null>(null)
 const renderedDrawer = ref<DrawerName | null>(null)
 const workDrawerRef = ref<InstanceType<typeof DrawerWork> | null>(null)
+const contactDrawerRef = ref<InstanceType<typeof DrawerContact> | null>(null)
 const drawerTrackOffset = ref(0)
 let drawerCloseTimer: ReturnType<typeof setTimeout> | null = null
 const getDrawerTransitionDuration = () => (
@@ -128,10 +129,15 @@ const toggleDrawer = (name: DrawerName) => {
   else openDrawer(name)
 }
 
+const resetDrawerDetail = (name: DrawerName) => {
+  if (name === 'work') workDrawerRef.value?.resetDetail()
+  if (name === 'contact') contactDrawerRef.value?.resetDetail()
+}
+
 const closeDrawer = (restoreFocus = true) => {
   if (!activeDrawer.value) return
   const closingDrawer = activeDrawer.value
-  if (activeDrawer.value === 'work') workDrawerRef.value?.resetDetail()
+  resetDrawerDetail(closingDrawer)
   activeDrawer.value = null
   if (restoreFocus) {
     nextTick(() => {
@@ -151,13 +157,20 @@ const stepBack = () => {
     workDrawerRef.value.backToList()
     return
   }
+  if (activeDrawer.value === 'contact' && contactDrawerRef.value?.hasActiveDetail()) {
+    contactDrawerRef.value.backToList()
+    return
+  }
   closeDrawer()
 }
 
 const handleDrawerBoundaryScroll = (delta: number) => {
   // The drawer has reached the top or bottom of its own content. Continue in
   // the page's snap scroller so the rail and drawer section advance together.
-  if (activeDrawer.value === 'work' && workDrawerRef.value?.hasActiveDetail()) return
+  if (
+    (activeDrawer.value === 'work' && workDrawerRef.value?.hasActiveDetail())
+    || (activeDrawer.value === 'contact' && contactDrawerRef.value?.hasActiveDetail())
+  ) return
   scrollRootRef.value?.scrollBy({ top: delta, behavior: 'smooth' })
 }
 
@@ -219,7 +232,7 @@ watch(activePanel, (panelIndex) => {
   }
 
   if (activeDrawer.value === nextSection.name) return
-  if (activeDrawer.value === 'work') workDrawerRef.value?.resetDetail()
+  resetDrawerDetail(activeDrawer.value)
 
   // The split stays fixed on desktop, while its content follows the same
   // snap sequence as the visible rail and page.
@@ -314,7 +327,7 @@ onUnmounted(() => {
         class="drawer-sequence__section drawer-sequence__section--dark"
         :aria-hidden="activeDrawer !== 'contact'"
       >
-        <DrawerContact />
+        <DrawerContact ref="contactDrawerRef" />
       </section>
     </div>
   </AppDrawer>

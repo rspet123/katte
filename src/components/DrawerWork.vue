@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref } from 'vue'
-import ExpandList from './ExpandList.vue'
+import StaticList from './StaticList.vue'
 import type { ExpandGroup } from './ExpandList.vue'
 import ProjectDetailDrawer from './ProjectDetailDrawer.vue'
 import type { ProjectDetailData } from '../types/projects'
@@ -120,7 +120,7 @@ const projects: ExpandGroup[] = [
 
 const experience: ExpandGroup[] = [
   {
-    label: 'EZOIC // SWE II', meta: '[ 2022 - CURRENT ]',
+    label: 'EZOIC » SWE II', meta: '[ 2022 - CURRENT ]',
     items: [
       {
         label: 'Agentic Incident Triage System',
@@ -162,7 +162,7 @@ const experience: ExpandGroup[] = [
         },
       },
       {
-        label: 'Domain Verification // Transfer Tool',
+        label: 'Domain Verification » Transfer Tool',
         detail: {
           ref: '004',
           title: 'Domain Verification & Transfer Tool',
@@ -195,21 +195,21 @@ const experience: ExpandGroup[] = [
             <div class="drawer__section">
               <div class="drawer__title-row">
                 <div>
-                  <p class="drawer__eyebrow">OUTPUT //</p>
+                  <p class="drawer__eyebrow">OUTPUT ¬</p>
                   <h3 class="drawer__title">experience.</h3>
                 </div>
                 <span class="drawer__detail" aria-hidden="true">
                   <span class="drawer__detail-inner" v-html="detail2Raw" />
                 </span>
               </div>
-              <ExpandList :groups="experience" @detail-select="openDetail" />
+              <StaticList :groups="experience" @detail-select="openDetail" />
             </div>
 
             <div class="drawer__section">
               <div class="drawer__title-row">
                 <h3 class="drawer__title">projects.</h3>
               </div>
-              <ExpandList :groups="projects" @detail-select="openDetail" />
+              <StaticList :groups="projects" @detail-select="openDetail" />
             </div>
           </div>
         </div>

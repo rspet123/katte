@@ -1,4 +1,6 @@
 export interface ProjectDetailData {
+  /** Detail category shown when no reference code is provided */
+  category?: string
   /** Short reference code, e.g. "001" */
   ref?: string
   /** Project title */
@@ -8,7 +10,7 @@ export interface ProjectDetailData {
   /** One or two sentence project overview */
   overview: string
   /** Technology stack items */
-  stack: string[]
+  stack?: string[]
   /** Status label, e.g. "PRODUCTION" */
   status?: string
   /** Optional GitHub URL */

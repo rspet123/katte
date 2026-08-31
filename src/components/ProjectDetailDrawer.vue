@@ -69,16 +69,16 @@ onUnmounted(() => {
 <template>
   <article class="project-detail drawer-panel scrollbar-thin" :aria-label="data.title">
     <button
-      class="project-detail__back eyebrow"
+      class="project-detail__back"
       type="button"
       data-detail-back
       @click="emit('back')"
     >
-      ← BACK // WORK
+      « BACK
     </button>
 
     <header class="project-detail__meta">
-      <span class="eyebrow">[ {{ data.ref ? `REF - ${data.ref}` : 'PROJECT' }} ]</span>
+      <span class="eyebrow">[ {{ data.ref ? `REF - ${data.ref}` : data.category ?? 'PROJECT' }} ]</span>
       <span v-if="data.dates" class="eyebrow">[ {{ data.dates }} ]</span>
     </header>
 
@@ -97,27 +97,27 @@ onUnmounted(() => {
     <div class="project-detail__rule" aria-hidden="true" />
 
     <section class="project-detail__section">
-      <p class="project-detail__section-label eyebrow">OVERVIEW //</p>
+      <p class="project-detail__section-label eyebrow">OVERVIEW »</p>
       <p class="project-detail__body">{{ data.overview }}</p>
     </section>
 
-    <section class="project-detail__section">
-      <p class="project-detail__section-label eyebrow">STACK //</p>
+    <section v-if="data.stack?.length" class="project-detail__section">
+      <p class="project-detail__section-label eyebrow">STACK »</p>
       <p class="project-detail__stack">
-        <template v-for="(technology, index) in data.stack" :key="technology">
+        <template v-for="(technology, index) in data.stack ?? []" :key="technology">
           <span>{{ technology }}</span>
-          <span v-if="index < data.stack.length - 1" class="project-detail__stack-separator" aria-hidden="true"> // </span>
+          <span v-if="index < (data.stack?.length ?? 0) - 1" class="project-detail__stack-separator" aria-hidden="true"> // </span>
         </template>
       </p>
     </section>
 
     <section v-if="data.status" class="project-detail__section project-detail__section--inline">
-      <p class="project-detail__section-label eyebrow">STATUS //</p>
+      <p class="project-detail__section-label eyebrow">STATUS »</p>
       <span class="project-detail__status eyebrow">[ {{ data.status }} ]</span>
     </section>
 
     <footer v-if="data.github || data.isPrivate" class="project-detail__footer">
-      <p class="project-detail__section-label eyebrow">LINK //</p>
+      <p class="project-detail__section-label eyebrow">LINK »</p>
 
       <span
         v-if="data.isPrivate"
@@ -153,21 +153,31 @@ onUnmounted(() => {
 }
 
 .project-detail__back {
+  position: absolute;
+  top: 2vh;
+  left: 2vw;
+  z-index: 1;
   display: inline-flex;
-  margin: 0 0 48px;
+  align-items: center;
+  margin: 0;
   padding: 0;
-  color: var(--c-text-muted);
+  color: var(--c-white);
   background: none;
   border: 0;
   border-radius: 0;
   cursor: pointer;
   font-family: inherit;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
   transition: color 180ms ease;
 }
 
 .project-detail__back:hover,
 .project-detail__back:focus-visible {
-  color: var(--c-white);
+  color: var(--c-accent);
 }
 
 .project-detail__back:focus-visible,
@@ -341,7 +351,8 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .project-detail__back {
-    margin-bottom: 36px;
+    top: 4vw;
+    left: 4vw;
   }
 
   .project-detail__meta,
