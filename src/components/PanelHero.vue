@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref } from 'vue'
 import angArrowRaw from '../assets/svg/micrographics/ang_arrow.svg?raw'
 import globeRaw    from '../assets/svg/micrographics/globe.svg?raw'
 import resistorRaw   from '../assets/svg/micrographics/resistor.svg?raw'
-import logoRaw from '../assets/svg/logo/main_logo.svg?raw'
-import { generateClipPath } from '../utils/clip_path_gen'
-import { rand } from '../utils/glitch'
 import vTypewriter from '../directives/v-typewriter.js'
+import GlitchLogo from './GlitchLogo.vue'
 
 const fixStrokes = (svg: string) => svg.replace(/stroke:#000/g, 'stroke:currentColor')
 const angArrow = computed(() => fixStrokes(angArrowRaw))
 const globeSvg  = computed(() => fixStrokes(globeRaw))
 const resistorSvg  = computed(() => fixStrokes(resistorRaw))
-const logoSvg  = computed(() => logoRaw)
 
 
 // ── Props / Emits ───────────────────────────────────────────────────────────
@@ -24,54 +21,9 @@ const panelRef = ref<HTMLElement | null>(null)
 
 
 // ── Glitch effect ───────────────────────────────────────────────────────────
-const heroLogoRef = ref<HTMLElement | null>(null)
-let glitchTimeout: ReturnType<typeof setTimeout> | null = null
+const heroLogoRef = ref<InstanceType<typeof GlitchLogo> | null>(null)
 
-const runGlitch = () => {
-  const el = heroLogoRef.value
-  if (!el) return
-
-  const flashCount = rand(2, 4)
-  let cursor = 0
-
-  for (let i = 0; i < flashCount; i++) {
-    const flashDuration = rand(40, 120)
-    const gap           = rand(20, 60)
-    const applyAt  = cursor
-    const clearAt  = cursor + flashDuration
-    cursor = clearAt + gap
-
-    const path = generateClipPath()
-    const caR  = rand(3, 8)
-    const caC  = rand(3, 8)
-    const blur = rand(3, 12) / 10
-
-    setTimeout(() => {
-      el.style.clipPath = path
-      el.style.setProperty('--ca-r-x',  `-${caR}px`)
-      el.style.setProperty('--ca-c-x',  `${caC}px`)
-      el.style.setProperty('--ca-blur', `${blur}px`)
-      el.classList.add('is-glitching')
-    }, applyAt)
-    setTimeout(() => {
-      el.style.clipPath = ''
-      el.style.removeProperty('--ca-r-x')
-      el.style.removeProperty('--ca-c-x')
-      el.style.removeProperty('--ca-blur')
-      el.classList.remove('is-glitching')
-    }, clearAt)
-  }
-}
-
-const scheduleGlitch = () => {
-  const delay = rand(5000, 10_000)
-  glitchTimeout = setTimeout(() => { runGlitch(); scheduleGlitch() }, delay)
-}
-
-defineExpose({ panelRef, triggerGlitch: runGlitch })
-
-onMounted(() => scheduleGlitch())
-onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
+defineExpose({ panelRef, triggerGlitch: () => heroLogoRef.value?.triggerGlitch() })
 </script>
 
 <template>
@@ -80,7 +32,7 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
 
     <p class="eyebrow corner-label" v-typewriter="{text: '[ VER. » 0.1.0 ]', seconds: 2.5}"></p>
 
-    <div class="hero-logo" ref="heroLogoRef" v-html="logoSvg" aria-hidden="true" />
+    <GlitchLogo ref="heroLogoRef" class="hero-logo" />
 
     <div class="panel-inner">
       <p class="eyebrow portfolio-label">
@@ -149,20 +101,6 @@ onUnmounted(() => { if (glitchTimeout) clearTimeout(glitchTimeout) })
   mix-blend-mode: difference;
   pointer-events: none;
   z-index: 50;
-}
-
-.hero-logo :deep(svg) {
-  width: 100%;
-  height: auto;
-  fill: #ffffff;
-  display: block;
-}
-
-.hero-logo.is-glitching {
-  filter:
-    blur(var(--ca-blur, 0.6px))
-    drop-shadow(var(--ca-r-x, -4px) 0 0 rgba(255, 20, 80, 0.9))
-    drop-shadow(var(--ca-c-x,  4px) 0 0 rgba(0, 220, 255, 0.9));
 }
 
 @media (max-width: 768px) {
