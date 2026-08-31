@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, onMounted, onUnmounted, watch } from 'vue'
 
+import textureBackground from '../assets/bgs/bg2.jpg'
 import burstlineRaw  from '../assets/svg/micrographics/long_burstline.svg?raw'
 import reticle1Raw   from '../assets/svg/micrographics/target_circle.svg?raw'
 import reticle2Raw   from '../assets/svg/micrographics/target_circle_2.svg?raw'
@@ -76,7 +77,8 @@ const workPanelRef    = ref<InstanceType<typeof PanelWork>    | null>(null)
 const aboutPanelRef   = ref<InstanceType<typeof PanelAbout>   | null>(null)
 const contactPanelRef = ref<InstanceType<typeof PanelContact> | null>(null)
 const scrollRootRef   = ref<HTMLElement | null>(null)
-const texRef          = ref<HTMLElement | null>(null)
+const texRef          = ref<HTMLImageElement | null>(null)
+const textureLoaded   = ref(false)
 
 let panelObserver: IntersectionObserver | null = null
 let panelElements: HTMLElement[] = []
@@ -222,6 +224,10 @@ const onScroll = () => {
   )
 }
 
+const revealTexture = () => {
+  textureLoaded.value = true
+}
+
 watch(activePanel, (panelIndex) => {
   if (!activeDrawer.value) return
 
@@ -248,6 +254,9 @@ onMounted(() => {
   // ── Texture parallax ───────────────────────────────────────────────────
   scrollRootRef.value?.addEventListener('scroll', onScroll, { passive: true })
   onScroll()
+
+  // The image may already be cached before Vue attaches the load listener.
+  if (texRef.value?.complete) revealTexture()
 
   panelObserver = new IntersectionObserver(
     (entries) => {
@@ -289,7 +298,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="tex-overlay" ref="texRef" aria-hidden="true" />
+  <img
+    ref="texRef"
+    class="tex-overlay"
+    :class="{ 'tex-overlay--loaded': textureLoaded }"
+    :src="textureBackground"
+    alt=""
+    aria-hidden="true"
+    @load="revealTexture"
+  >
 
   <div
     ref="reticleRef"
@@ -383,15 +400,22 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   height: 200vh;
-  background: url('@/assets/bgs/bg2.jpg') center center / cover;
-  opacity: 0.06;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
   pointer-events: none;
   z-index: 5;
   will-change: transform;
+  transition: opacity 1.5s ease;
+}
+
+.tex-overlay--loaded {
+  opacity: 0.06;
 }
 
 @media (max-width: 768px) {
-  .tex-overlay {
+  .tex-overlay--loaded {
     opacity: 0.1;
   }
 }

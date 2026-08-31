@@ -7,7 +7,29 @@
     <title>KATTE</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div class="site-loading" role="status" aria-label="Loading site">
+        <img src="/main_logo.svg" alt="KATTE">
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
+    <style>
+      html, body, #app { min-height: 100%; margin: 0; }
+      .site-loading {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        background: #0a0a0a;
+      }
+      .site-loading img {
+        display: block;
+        width: clamp(500px, 70vw, 1000px);
+        height: auto;
+        filter: invert(1);
+        opacity: 0.82;
+      }
+    </style>
   </body>
 </html>

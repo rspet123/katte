@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import HeroSection from './components/HeroSection.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <HeroSection />
+  <RouterView />
 </template>
 
 <style>
